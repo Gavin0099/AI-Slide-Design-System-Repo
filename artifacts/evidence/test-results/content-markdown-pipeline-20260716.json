@@ -1,0 +1,17 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-16T09:34:10Z",
+  "finished_at": "2026-07-16T09:34:24Z",
+  "runner": "codex-windows",
+  "linked_commit": "bb08e6590097f72db105c2c7800674813162ad12",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/content-markdown-pipeline-20260716.txt"
+  ],
+  "cannot_claim": [
+    "semantic correctness of the tested behavior",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}

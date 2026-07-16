@@ -1,0 +1,137 @@
+
+> ai-slide-design-system@0.1.0 check
+> npm run font:check && npm run content:check && npm run content:test && npm run model:test && npm run renderer:test && npm run pptx:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run build
+
+
+> ai-slide-design-system@0.1.0 font:check
+> node scripts/check-font-assets.mjs
+
+Font asset integrity passed: pinned Noto Sans TC Local, OFL, metadata, and SHA-256 values
+
+> ai-slide-design-system@0.1.0 content:check
+> node scripts/render-content.mjs --check
+
+Content check passed: decks\ai-governance\content.md -> decks\ai-governance\deck.mjs
+
+> ai-slide-design-system@0.1.0 content:test
+> node scripts/test-content-markdown.mjs
+
+Content Markdown tests passed: deterministic projection plus layout, field, structure, and model failure paths
+
+> ai-slide-design-system@0.1.0 model:test
+> node scripts/test-slide-model.mjs
+
+Semantic model tests passed: ten layouts, boundary, and failure-path cases
+
+> ai-slide-design-system@0.1.0 renderer:test
+> node scripts/test-render-slidev.mjs
+
+Slidev renderer regression passed: semantic slides map one-to-one to page frontmatters
+
+> ai-slide-design-system@0.1.0 pptx:test
+> node scripts/test-render-pptx.mjs
+
+Editable PPTX renderer tests passed: 10 semantic slides, native text/shapes, no flattened slide images
+
+> ai-slide-design-system@0.1.0 lint
+> node scripts/lint-slides.mjs
+
+Slide lint passed: 10 slides, 10 semantic layouts
+
+> ai-slide-design-system@0.1.0 render:check
+> node scripts/render-slidev.mjs --check
+
+Render check passed: decks\ai-governance\slides.md
+
+> ai-slide-design-system@0.1.0 visual:baseline:check
+> node scripts/check-visual-baselines.mjs
+
+Visual baseline integrity passed: 10 approved 1280x720 screenshots match manifest SHA-256 values
+
+> ai-slide-design-system@0.1.0 build
+> npm run render && slidev build decks/ai-governance/slides.md --out ../../dist/ai-governance
+
+
+> ai-slide-design-system@0.1.0 render
+> npm run content:build && node scripts/render-slidev.mjs
+
+
+> ai-slide-design-system@0.1.0 content:build
+> node scripts/render-content.mjs
+
+Rendered 10 semantic slides from decks\ai-governance\content.md to decks\ai-governance\deck.mjs
+Rendered 10 slides to decks\ai-governance\slides.md
+
+
+  ●■▲
+  Slidev  v52.18.0 (global)
+
+  theme       ../../theme
+  css engine  unocss
+  entry       E:/BackUp/Git_EE/AI-Slide-Design-System-Repo/decks/ai-governance/slides.md
+[36mvite v8.1.4 [32mbuilding client environment for production...[36m[39m
+[2K
+transforming...✓ 510 modules transformed.
+[33m
+[1m(!)[22m outDir [37m[2mE:\BackUp\Git_EE\AI-Slide-Design-System-Repo\dist\ai-governance[22m[33m is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+[39m
+rendering chunks...
+computing gzip size...
+dist/ai-governance/index.html                                         1.62 kB │ gzip:  0.70 kB
+dist/ai-governance/assets/logo-BYkHSa_O.png                          94.32 kB
+dist/ai-governance/assets/NotoSansTC-VF-DQYNpvqM.ttf             11,941.96 kB
+dist/ai-governance/assets/play-D_7yfuao.css                           0.06 kB │ gzip:  0.08 kB
+dist/ai-governance/assets/DrawingControls-Dhbx0szf.css                0.07 kB │ gzip:  0.08 kB
+dist/ai-governance/assets/NoteDisplay-DCBzjb4F.css                    0.09 kB │ gzip:  0.10 kB
+dist/ai-governance/assets/overview-BIQ10iVu.css                       0.13 kB │ gzip:  0.09 kB
+dist/ai-governance/assets/404-bkedjYjP.css                            0.15 kB │ gzip:  0.12 kB
+dist/ai-governance/assets/md-DRvfytO0.css                             0.24 kB │ gzip:  0.20 kB
+dist/ai-governance/assets/entry-Dba4BKje.css                          0.32 kB │ gzip:  0.21 kB
+dist/ai-governance/assets/md-CAfLCa0m.css                             0.39 kB │ gzip:  0.23 kB
+dist/ai-governance/assets/md-BmRBfDf1.css                             0.80 kB │ gzip:  0.36 kB
+dist/ai-governance/assets/SlideWrapper-O3NT4xUm.css                   0.91 kB │ gzip:  0.35 kB
+dist/ai-governance/assets/shortcuts-DmQA3mjy.css                      1.56 kB │ gzip:  0.66 kB
+dist/ai-governance/assets/presenter-J5ibmAMh.css                      3.38 kB │ gzip:  0.72 kB
+dist/ai-governance/assets/modules/shiki-BrmBd2_v.css                 15.67 kB │ gzip:  2.92 kB
+dist/ai-governance/assets/index-9YnazVvj.css                         97.32 kB │ gzip: 18.42 kB
+dist/ai-governance/assets/_plugin-vue_export-helper-BDNMzG2s.js       0.08 kB │ gzip:  0.09 kB
+dist/ai-governance/assets/slidev/VerticalDivider-Jzk1h2GZ.js          0.25 kB │ gzip:  0.22 kB
+dist/ai-governance/assets/slidev/IconButton-CNy5JqqR.js               0.58 kB │ gzip:  0.38 kB
+dist/ai-governance/assets/slidev/DrawingLayer-CHXdjsj9.js             0.60 kB │ gzip:  0.42 kB
+dist/ai-governance/assets/rolldown-runtime-QTnfLwEv.js                0.69 kB │ gzip:  0.42 kB
+dist/ai-governance/assets/slidev/Modal-klgONkxg.js                    0.71 kB │ gzip:  0.47 kB
+dist/ai-governance/assets/slidev/entry-mYzizcxT.js                    0.93 kB │ gzip:  0.46 kB
+dist/ai-governance/assets/md-DEY8ZVGD.js                              1.03 kB │ gzip:  0.64 kB
+dist/ai-governance/assets/md-Cfw8LO2R.js                              1.15 kB │ gzip:  0.66 kB
+dist/ai-governance/assets/slidev/404-CfIercLZ.js                      1.16 kB │ gzip:  0.69 kB
+dist/ai-governance/assets/md-Bsplv_UB.js                              1.17 kB │ gzip:  0.65 kB
+dist/ai-governance/assets/md-USN15Zem.js                              1.22 kB │ gzip:  0.70 kB
+dist/ai-governance/assets/syncState-DvR34L3m.js                       1.39 kB │ gzip:  0.75 kB
+dist/ai-governance/assets/md-CXAEwEVO.js                              1.44 kB │ gzip:  0.75 kB
+dist/ai-governance/assets/md-CJ_jy7bd.js                              1.51 kB │ gzip:  0.78 kB
+dist/ai-governance/assets/md-BO_ky04k.js                              1.62 kB │ gzip:  0.87 kB
+dist/ai-governance/assets/modules/unplugin-icons-DBYfGOtO.js          1.65 kB │ gzip:  0.79 kB
+dist/ai-governance/assets/slidev/context-BH8ST4_4.js                  1.68 kB │ gzip:  0.90 kB
+dist/ai-governance/assets/md-BN2XyfaU.js                              1.73 kB │ gzip:  0.94 kB
+dist/ai-governance/assets/md-D8tiqA2O.js                              1.77 kB │ gzip:  0.87 kB
+dist/ai-governance/assets/md-LLlfXVp0.js                              2.02 kB │ gzip:  1.03 kB
+dist/ai-governance/assets/slidev/notes-edit-oEna3xFO.js               2.13 kB │ gzip:  1.15 kB
+dist/ai-governance/assets/slidev/NoteEditable-BNJ4Eoo8.js             2.23 kB │ gzip:  1.18 kB
+dist/ai-governance/assets/modules/file-saver-DJvf_BAX.js              2.69 kB │ gzip:  1.29 kB
+dist/ai-governance/assets/slidev/TimerBar-DTLlo90v.js                 2.75 kB │ gzip:  1.22 kB
+dist/ai-governance/assets/slidev/notes-BqrT-ia_.js                    3.29 kB │ gzip:  1.52 kB
+dist/ai-governance/assets/SlideWrapper-CJDHjfvb.js                    4.68 kB │ gzip:  2.06 kB
+dist/ai-governance/assets/slidev/play-CeGEATRU.js                     5.15 kB │ gzip:  2.35 kB
+dist/ai-governance/assets/slidev/DrawingControls-C8n9suFq.js          5.41 kB │ gzip:  2.11 kB
+dist/ai-governance/assets/slidev/NoteDisplay-BtEJIyDN.js              6.05 kB │ gzip:  2.64 kB
+dist/ai-governance/assets/slidev/overview-BIMiAn_x.js                 9.40 kB │ gzip:  4.08 kB
+dist/ai-governance/assets/slidev/presenter-tgQtcLUM.js               10.44 kB │ gzip:  4.02 kB
+dist/ai-governance/assets/useDrawings-aedAohxk.js                    20.54 kB │ gzip:  7.08 kB
+dist/ai-governance/assets/slidev/useNav-DsLhAQBv.js                  26.91 kB │ gzip: 10.04 kB
+dist/ai-governance/assets/slidev/shortcuts-DUngks4P.js               66.11 kB │ gzip: 23.82 kB
+dist/ai-governance/assets/modules/vue-DXwFfHTO.js                    82.48 kB │ gzip: 30.72 kB
+dist/ai-governance/assets/index-vfBSH8Rz.js                          95.28 kB │ gzip: 34.29 kB
+dist/ai-governance/assets/modules/shiki-D0mxg-Xr.js                 224.21 kB │ gzip: 79.19 kB
+
+[32m✓ built in 2.56s[39m
