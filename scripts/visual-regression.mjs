@@ -50,10 +50,10 @@ if (updateMode) {
   await writeFile(path.join(baselineRoot, 'manifest.json'), `${JSON.stringify({
     deck: 'ai-governance',
     viewport: { width: 1280, height: 720, deviceScaleFactor: 1 },
-    reviewStatus: 'pending-human-review',
     files,
   }, null, 2)}\n`)
   console.log(`Updated ${files.length} screenshot baselines in ${path.relative(repoRoot, baselineRoot)}`)
+  console.log('Human review authority was invalidated; record a new explicit human decision after full-size inspection')
 } else {
   await rm(diffRoot, { recursive: true, force: true })
   await mkdir(diffRoot, { recursive: true })

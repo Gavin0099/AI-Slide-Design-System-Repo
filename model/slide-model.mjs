@@ -23,6 +23,8 @@ const LIMITS = Object.freeze({
 function text(value, path, maxLength) {
   if (typeof value !== 'string' || value.trim() === '')
     throw new Error(`${path} must be a non-empty string`)
+  if (/[\r\n]/u.test(value))
+    throw new Error(`${path} must not contain line breaks`)
   if ([...value.trim()].length > maxLength)
     throw new Error(`${path} exceeds ${maxLength} characters`)
 }

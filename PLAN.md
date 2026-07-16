@@ -32,6 +32,7 @@
 - [x] Add and visually approve `evidence`, `metrics`, `decision`, and `closing`
 - [x] Add and visually approve an editable PptxGenJS renderer for all ten layouts
 - [x] Add deterministic `content.md -> deck.mjs -> PPTX` generation and failure-path tests
+- [x] Close the visual-gate review findings: semantic newline rejection, real-deck structure assertions, local pixel enforcement, and external human authority binding
 
 ## Backlog
 
@@ -53,6 +54,8 @@
 - 2026-07-16: Approve ten semantic layouts through the same model, build, screenshot, pixel-diff, and manual visual review gate.
 - 2026-07-16: Render editable PPTX from the same Semantic Model with native PowerPoint text and shapes; keep font embedding outside the current claim boundary.
 - 2026-07-16: Promote `decks/*/content.md` to canonical human-authored content; generate `deck.mjs` and `slides.md` deterministically, with PPTX remaining a non-round-trip delivery artifact.
+- 2026-07-16: Separate baseline artifact integrity, current-render pixel regression, and human review authority into independent gates; local `check` owns pixel regression while platform-neutral CI uses `check:ci`.
+- 2026-07-16: Human visual authority must be an explicit external decision bound to the exact baseline manifest digest; agents may serialize but must not infer or self-sign that decision.
 
 ## Known Risks
 
@@ -65,3 +68,4 @@
 - Editable PPTX references Noto Sans TC but does not embed the repo TTF. Mitigation: structural tests make the boundary explicit and cross-platform Office review remains the next gate.
 - Third-party PPTX readers can interpret advanced OOXML effects differently. Mitigation: the renderer uses a conservative shape/effect surface and the final file passes artifact-tool render and overflow checks.
 - Strict Markdown input is intentionally less expressive than arbitrary prose. Mitigation: unknown headings, missing fields, malformed structured items, and model-limit violations fail before either renderer runs.
+- A committed authority receipt cannot by itself prove real-world reviewer identity. Mitigation: receipt validation binds the decision to exact baseline bytes, CODEOWNERS routes review, and branch protection remains the external enforcement boundary.

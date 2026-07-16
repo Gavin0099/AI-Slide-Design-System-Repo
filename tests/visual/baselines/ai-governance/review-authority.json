@@ -1,0 +1,11 @@
+{
+  "schema": "visual-review-authority.v1",
+  "deck": "ai-governance",
+  "decision": "approved",
+  "reviewerType": "human",
+  "reviewerId": "Gavin0099",
+  "reviewedAt": "2026-07-16T10:14:19Z",
+  "evidenceRef": "artifacts/evidence/visual-review/visual-gate-remediation-review-20260716.md",
+  "independenceMode": "single-contributor",
+  "baselineManifestSha256": "8b828b72f40ace6ef7dac97a33e654f8bda0243c06c4d4e67682337e84c059cd"
+}

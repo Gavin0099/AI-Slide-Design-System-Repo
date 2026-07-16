@@ -1,0 +1,16 @@
+Visual gate remediation evidence
+recorded_at=2026-07-16T10:18:08Z
+base_commit=a47ac9e1ccacd62069111844d6a82f1f95bc4175
+scope=review findings 1, 2, 3, and 5
+normal_check=npm run check; exit=0; ten layouts at 0.000% pixel difference
+mutation_check=npm run check with magenta background and ink; expected_exit=1; actual_exit=1
+mutation_pixel_difference=43.439% to 96.915% across nine affected layouts
+mutation_restored=true
+restored_theme_blob=35197c6cbff69a7b7ff007e7d3a54d73d5dabaab
+semantic_injection=CR and LF rejected by model regression
+real_deck_structure=fixture and decks/ai-governance/deck.mjs asserted one-to-one
+authority_check=PASS
+authority_reviewer=Gavin0099
+authority_independence=single-contributor
+authority_manifest_sha256=8b828b72f40ace6ef7dac97a33e654f8bda0243c06c4d4e67682337e84c059cd
+claim_boundary=independent reviewer approval and cryptographic reviewer identity are not claimed

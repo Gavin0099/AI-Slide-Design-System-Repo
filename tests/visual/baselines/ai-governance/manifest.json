@@ -5,9 +5,6 @@
     "height": 720,
     "deviceScaleFactor": 1
   },
-  "reviewStatus": "approved-human-review",
-  "reviewedAt": "2026-07-16",
-  "reviewEvidence": "artifacts/evidence/visual-review/phase-c-editable-pptx-review-20260716.md",
   "files": [
     {
       "filename": "01-cover.png",

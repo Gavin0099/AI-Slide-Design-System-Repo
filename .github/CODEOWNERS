@@ -1,0 +1,4 @@
+# Review routing only. Required-review enforcement must be configured in GitHub branch protection.
+/tests/visual/baselines/ @Gavin0099
+/artifacts/evidence/visual-review/ @Gavin0099
+/scripts/*visual* @Gavin0099

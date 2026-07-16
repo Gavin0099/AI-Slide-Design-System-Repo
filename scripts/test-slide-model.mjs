@@ -13,6 +13,19 @@ const validDeck = {
 
 assert.deepEqual(validateDeck(validDeck), [])
 
+const injectedTitle = structuredClone(validDeck)
+injectedTitle.slides[0].title = 'ok\n---\nlayout: cover'
+assert.match(validateDeck(injectedTitle)[0], /must not contain line breaks/)
+
+const injectedListItem = structuredClone(validDeck)
+injectedListItem.slides = [{
+  type: 'comparison',
+  title: '安全邊界',
+  left: { title: '左側', items: ['ok\r\n---'] },
+  right: { title: '右側', items: ['safe'] },
+}]
+assert.match(validateDeck(injectedListItem)[0], /left\.items\[0\] must not contain line breaks/)
+
 const overlongTitle = structuredClone(validDeck)
 overlongTitle.slides[0].title = '這是一個刻意超過二十二個中文字限制而且不應該通過的投影片標題'
 assert.match(validateDeck(overlongTitle)[0], /exceeds 22 characters/)

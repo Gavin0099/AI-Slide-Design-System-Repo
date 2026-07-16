@@ -35,7 +35,9 @@ decks/ai-governance/slides.md
 npm install
 npm run dev
 npm run check
+npm run check:ci
 npm run visual:test
+npm run visual:authority:check
 npm run content:pptx
 npm run pptx:build
 npm run pptx:test
@@ -51,8 +53,11 @@ npm run pptx:test
 - `npm run font:check`：驗證 repo-local Noto Sans TC、OFL 授權、來源 commit、檔案大小與 SHA-256。
 - `npm run build`：輸出靜態 Slidev deck 到 `dist/ai-governance/`。
 - `npm run visual:baseline:update`：以 1280×720 重新產生十張 baseline，並將 review status 重設為待人工審查。
-- `npm run visual:baseline:check`：不啟動瀏覽器，驗證已核准 baseline 的尺寸與 SHA-256。
+- `npm run check`：本機完整 gate，包含目前畫面相對 baseline 的 pixel regression。
+- `npm run check:ci`：跨平台 CI gate；在共用 pixel baseline 有平台證據前不執行 pixel regression。
+- `npm run visual:baseline:check`：不啟動瀏覽器，只驗證 committed baseline 的尺寸與 SHA-256；不代表目前 render 或 human approval 已通過。
 - `npm run visual:test`：以本機 Chrome 重新擷取圖片並執行 pixel diff；可用 `SLIDEV_BROWSER_PATH` 指定 Chrome-compatible executable。
+- `npm run visual:authority:check`：驗證 human decision receipt 的 schema 與 baseline manifest digest binding；authority 邊界見 `docs/VISUAL_REVIEW_GATE.md`。
 - `npm run pptx:build`：先更新 `deck.mjs`，再從同一 Semantic Model 輸出 `dist/ai-governance/ai-governance-editable.pptx`。
 - `npm run pptx:test`：解開 OOXML 並驗證投影片數量、語意文字、原生可編輯物件、備註與無平面化圖片。
 

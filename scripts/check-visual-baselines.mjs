@@ -23,7 +23,6 @@ const expected = [
 const manifest = JSON.parse(await readFile(path.join(baselineRoot, 'manifest.json'), 'utf8'))
 assert.equal(manifest.deck, 'ai-governance')
 assert.deepEqual(manifest.viewport, { width: 1280, height: 720, deviceScaleFactor: 1 })
-assert.equal(manifest.reviewStatus, 'approved-human-review')
 assert.deepEqual(
   manifest.files.map(({ filename, layout }) => ({ filename, layout })),
   expected,
@@ -40,4 +39,5 @@ for (const entry of manifest.files) {
   assert.equal(digest, entry.sha256, `${entry.filename} SHA-256 drifted`)
 }
 
-console.log('Visual baseline integrity passed: 10 approved 1280x720 screenshots match manifest SHA-256 values')
+console.log('Visual baseline artifact integrity passed: 10 committed 1280x720 screenshots match manifest SHA-256 values')
+console.log('Claim boundary: this command does not render current slides or establish human review authority')

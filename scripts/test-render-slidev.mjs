@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
+import realDeck from '../decks/ai-governance/deck.mjs'
 import { renderDeck } from './render-slidev.mjs'
 
-const deck = {
+const fixtureDeck = {
   title: 'Renderer test',
   description: 'Three semantic slides must remain three Slidev pages.',
   slides: [
@@ -63,13 +64,19 @@ const deck = {
   ],
 }
 
-const rendered = renderDeck(deck)
-const horizontalRules = rendered.match(/^---$/gm) ?? []
+function assertOneToOneStructure(deck, label) {
+  const rendered = renderDeck(deck)
+  const horizontalRules = rendered.match(/^---$/gm) ?? []
 
-assert.equal(horizontalRules.length, deck.slides.length * 2)
-assert.doesNotMatch(rendered, /\n\n---\n\n---\n/)
-assert.equal((rendered.match(/^layout:/gm) ?? []).length, deck.slides.length)
+  assert.equal(horizontalRules.length, deck.slides.length * 2, `${label} frontmatter delimiter count drifted`)
+  assert.doesNotMatch(rendered, /\n\n---\n\n---\n/, `${label} rendered an empty Slidev page`)
+  assert.equal((rendered.match(/^layout:/gm) ?? []).length, deck.slides.length, `${label} layout count drifted`)
+  return rendered
+}
+
+const rendered = assertOneToOneStructure(fixtureDeck, 'fixture deck')
+assertOneToOneStructure(realDeck, 'decks/ai-governance/deck.mjs')
 for (const layout of ['evidence', 'metrics', 'decision', 'closing'])
   assert.match(rendered, new RegExp(`layout: "${layout}"`))
 
-console.log('Slidev renderer regression passed: semantic slides map one-to-one to page frontmatters')
+console.log('Slidev renderer regression passed: fixture and real semantic decks map one-to-one to page frontmatters')
