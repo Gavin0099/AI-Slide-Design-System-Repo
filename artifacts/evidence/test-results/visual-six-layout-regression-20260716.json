@@ -1,0 +1,17 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run visual:test",
+  "exit_code": 0,
+  "started_at": "2026-07-16T04:59:21Z",
+  "finished_at": "2026-07-16T04:59:34Z",
+  "runner": "codex-windows",
+  "linked_commit": "de224438ce2557b474fb17451ffb7a07f317be9c",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/visual-six-layout-regression-20260716.txt"
+  ],
+  "cannot_claim": [
+    "semantic correctness of the tested behavior",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}
