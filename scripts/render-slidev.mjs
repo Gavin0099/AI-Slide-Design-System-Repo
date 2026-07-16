@@ -105,6 +105,57 @@ function renderSlide(deckToRender, slide, index) {
     ].join('\n\n')
   }
 
+  if (slide.type === 'evidence') {
+    return [
+      frontmatter({
+        layout: 'evidence',
+        eyebrow: slide.eyebrow,
+        claim: slide.claim,
+        status: slide.status,
+        sources: slide.sources,
+      }),
+      `# ${slide.title}`,
+    ].join('\n\n')
+  }
+
+  if (slide.type === 'metrics') {
+    return [
+      frontmatter({
+        layout: 'metrics',
+        eyebrow: slide.eyebrow,
+        metrics: slide.metrics,
+      }),
+      `# ${slide.title}`,
+    ].join('\n\n')
+  }
+
+  if (slide.type === 'decision') {
+    return [
+      frontmatter({
+        layout: 'decision',
+        eyebrow: slide.eyebrow,
+        decision: slide.decision,
+        reasons: slide.reasons,
+        owner: slide.owner,
+        nextAction: slide.nextAction,
+      }),
+      `# ${slide.title}`,
+    ].join('\n\n')
+  }
+
+  if (slide.type === 'closing') {
+    return [
+      frontmatter({
+        layout: 'closing',
+        eyebrow: slide.eyebrow,
+        summary: slide.summary,
+        actions: slide.actions,
+        nextAction: slide.nextAction,
+      }),
+      `# ${slide.title}`,
+    ].join('\n\n')
+  }
+
   throw new Error(`Unsupported slide type at index ${index}: ${slide.type}`)
 }
 

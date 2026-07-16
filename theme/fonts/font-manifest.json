@@ -1,0 +1,28 @@
+{
+  "family": "Noto Sans TC Local",
+  "upstreamFamily": "Noto Sans TC",
+  "version": "2.004",
+  "sourceRepository": "https://github.com/google/fonts",
+  "sourceCommit": "b950a7257470b900078f2bf3223823a8602de7e1",
+  "license": "OFL-1.1",
+  "assets": [
+    {
+      "path": "NotoSansTC-VF.ttf",
+      "sourcePath": "ofl/notosanstc/NotoSansTC[wght].ttf",
+      "bytes": 11941968,
+      "sha256": "864727d210d54f2537bbe23b3a839436c3992af72de9322af5270897246bd44f"
+    },
+    {
+      "path": "OFL.txt",
+      "sourcePath": "ofl/notosanstc/OFL.txt",
+      "bytes": 4388,
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+    },
+    {
+      "path": "METADATA.pb",
+      "sourcePath": "ofl/notosanstc/METADATA.pb",
+      "bytes": 1060,
+      "sha256": "213cbcf6933d48c55d36c95d8253b053cd44d6099f275a691a510b234e325e43"
+    }
+  ]
+}

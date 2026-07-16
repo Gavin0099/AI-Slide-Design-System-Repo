@@ -7,49 +7,77 @@
   },
   "reviewStatus": "approved-human-review",
   "reviewedAt": "2026-07-16",
-  "reviewEvidence": "artifacts/evidence/visual-review/phase-b-p1-layout-review-20260716.md",
+  "reviewEvidence": "artifacts/evidence/visual-review/phase-b-p2-font-layout-review-20260716.md",
   "files": [
     {
       "filename": "01-cover.png",
       "layout": "cover",
       "width": 1280,
       "height": 720,
-      "sha256": "43e01d076045a38670a2b2338cdcf0e0e29302a15883df78bfd4fe3f7f4a7ab2"
+      "sha256": "90cc678557007f837812c8cc201b82dc96fee77b01942694a745ba15c3b5aad8"
     },
     {
       "filename": "02-key-message.png",
       "layout": "key-message",
       "width": 1280,
       "height": 720,
-      "sha256": "1fe64344688715b4b1f6ced0f43221047101ac99e6e23a16b7ee1aac3f43a731"
+      "sha256": "ff0c86cf19704812cae5012aaf5ecd8a3fc0854a8ec46ab1522e3b41d390778d"
     },
     {
       "filename": "03-comparison.png",
       "layout": "comparison",
       "width": 1280,
       "height": 720,
-      "sha256": "d6ecd7f25812cd2afa0ad67d5ad9be67def6e6ba5ffd2582578f329c0629ea48"
+      "sha256": "e574c35e5cca07878670f2cf9e50b2a7b2e1b650b7dec897c3a7b6b7d549207a"
     },
     {
       "filename": "04-problem-solution.png",
       "layout": "problem-solution",
       "width": 1280,
       "height": 720,
-      "sha256": "5cf3fb6f2545fb95b153c4c6cef848f127d8b08d73eb17ccb587f6a050882833"
+      "sha256": "52e2c4d75a0c80ecbdcd0cdee5116ef44d5f698bd4fbf3a8e3e2a5821598691c"
     },
     {
       "filename": "05-process.png",
       "layout": "process",
       "width": 1280,
       "height": 720,
-      "sha256": "43b0489834ff5073d07f5161730d479906d005cc3f2dd15689a75ed3dd8f10c7"
+      "sha256": "f51340ac1f59ba6e2936f487316dd96aa2af594eb7ea5ae1a3b27bf4c1966562"
     },
     {
       "filename": "06-architecture.png",
       "layout": "architecture",
       "width": 1280,
       "height": 720,
-      "sha256": "c007df2be811240f2f9cff3a4dd2341b4899722ac720f373c7bcb90b96e47944"
+      "sha256": "90a9a32eb345969fb5965a5dd00f19dc902648a2b23833c7e71dc242769270c6"
+    },
+    {
+      "filename": "07-evidence.png",
+      "layout": "evidence",
+      "width": 1280,
+      "height": 720,
+      "sha256": "3e8ad9341c63c696c0a96dab91074dc0d0ef2a5361523209e0427939aa445009"
+    },
+    {
+      "filename": "08-metrics.png",
+      "layout": "metrics",
+      "width": 1280,
+      "height": 720,
+      "sha256": "4f2d13bb080441ebed120c7f8bb0c5af3a945b6da3a3c444d9691dcea387ef27"
+    },
+    {
+      "filename": "09-decision.png",
+      "layout": "decision",
+      "width": 1280,
+      "height": 720,
+      "sha256": "35b08126d48fe112ad775acfbc31331eaef621357e6b4cf9bf5c5ff0fc1a2f2f"
+    },
+    {
+      "filename": "10-closing.png",
+      "layout": "closing",
+      "width": 1280,
+      "height": 720,
+      "sha256": "5c5bfd0ea71b255de207c15516ef20455d2994a594987dbf4699c45a6b026697"
     }
   ]
 }

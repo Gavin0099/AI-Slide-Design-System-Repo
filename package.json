@@ -8,6 +8,7 @@
     "render": "node scripts/render-slidev.mjs",
     "render:check": "node scripts/render-slidev.mjs --check",
     "lint": "node scripts/lint-slides.mjs",
+    "font:check": "node scripts/check-font-assets.mjs",
     "model:test": "node scripts/test-slide-model.mjs",
     "renderer:test": "node scripts/test-render-slidev.mjs",
     "build": "npm run render && slidev build decks/ai-governance/slides.md --out ../../dist/ai-governance",
@@ -15,12 +16,12 @@
     "visual:baseline:update": "npm run build && node scripts/visual-regression.mjs --update",
     "visual:baseline:check": "node scripts/check-visual-baselines.mjs",
     "visual:test": "npm run build && node scripts/visual-regression.mjs",
-    "check": "npm run model:test && npm run renderer:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run build"
+    "check": "npm run font:check && npm run model:test && npm run renderer:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run build"
   },
   "devDependencies": {
     "@slidev/cli": "52.18.0",
     "pixelmatch": "7.2.0",
-    "playwright-chromium": "1.61.1",
+    "playwright-core": "1.61.1",
     "pngjs": "7.0.0",
     "vue": "3.5.39"
   }

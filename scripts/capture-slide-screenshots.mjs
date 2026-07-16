@@ -1,10 +1,9 @@
-import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
-import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PNG } from 'pngjs'
+import { chromium } from 'playwright-core'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const buildRoot = path.join(repoRoot, 'dist', 'ai-governance')
@@ -17,6 +16,10 @@ export const slideScreenshots = [
   { number: 4, layout: 'problem-solution', filename: '04-problem-solution.png' },
   { number: 5, layout: 'process', filename: '05-process.png' },
   { number: 6, layout: 'architecture', filename: '06-architecture.png' },
+  { number: 7, layout: 'evidence', filename: '07-evidence.png' },
+  { number: 8, layout: 'metrics', filename: '08-metrics.png' },
+  { number: 9, layout: 'decision', filename: '09-decision.png' },
+  { number: 10, layout: 'closing', filename: '10-closing.png' },
 ]
 
 const mimeTypes = new Map([
@@ -26,6 +29,7 @@ const mimeTypes = new Map([
   ['.json', 'application/json; charset=utf-8'],
   ['.png', 'image/png'],
   ['.svg', 'image/svg+xml'],
+  ['.ttf', 'font/ttf'],
   ['.woff', 'font/woff'],
   ['.woff2', 'font/woff2'],
 ])
@@ -101,180 +105,67 @@ async function startStaticServer() {
   return { server, baseUrl: `http://127.0.0.1:${address.port}` }
 }
 
-function startBrowser(browser, args) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(browser, args, { stdio: ['ignore', 'ignore', 'pipe'] })
-    let stderr = ''
-    let settled = false
-    const timer = setTimeout(() => {
-      child.kill()
-      reject(new Error(`Timed out waiting for Chrome DevTools: ${stderr.trim()}`))
-    }, 15_000)
+async function waitForSlide(page, slideNumber) {
+  const slide = page.locator(`[data-slidev-no="${slideNumber}"]`)
+  await slide.waitFor({ state: 'visible', timeout: 20_000 })
+  await page.waitForFunction(number => {
+    const element = document.querySelector(`[data-slidev-no="${number}"]`)
+    const rect = element?.getBoundingClientRect()
+    return document.querySelectorAll('.slidev-slide-loading').length === 0
+      && Boolean(rect?.width && rect?.height)
+  }, slideNumber, { timeout: 20_000 })
+  await page.evaluate(() => document.fonts.ready)
 
-    child.stderr.on('data', chunk => {
-      stderr += chunk
-      const match = stderr.match(/DevTools listening on (ws:\/\/\S+)/)
-      if (!match || settled) return
-      settled = true
-      clearTimeout(timer)
-      resolve({ child, browserWebSocketUrl: match[1] })
-    })
-    child.once('error', error => {
-      clearTimeout(timer)
-      reject(error)
-    })
-    child.once('exit', code => {
-      if (settled) return
-      clearTimeout(timer)
-      reject(new Error(`Chrome exited before DevTools was ready (${code}): ${stderr.trim()}`))
-    })
-  })
-}
-
-class CdpClient {
-  constructor(socket) {
-    this.socket = socket
-    this.nextId = 1
-    this.pending = new Map()
-    socket.addEventListener('message', event => {
-      const message = JSON.parse(event.data)
-      if (!message.id) return
-      const pending = this.pending.get(message.id)
-      if (!pending) return
-      this.pending.delete(message.id)
-      if (message.error) pending.reject(new Error(message.error.message))
-      else pending.resolve(message.result)
-    })
-    socket.addEventListener('close', () => {
-      for (const pending of this.pending.values()) pending.reject(new Error('Chrome DevTools connection closed.'))
-      this.pending.clear()
-    })
-  }
-
-  send(method, params = {}) {
-    const id = this.nextId++
-    return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject })
-      this.socket.send(JSON.stringify({ id, method, params }))
-    })
-  }
-
-  close() {
-    this.socket.close()
-  }
-}
-
-async function connectCdp(webSocketUrl) {
-  const socket = new WebSocket(webSocketUrl)
-  await new Promise((resolve, reject) => {
-    socket.addEventListener('open', resolve, { once: true })
-    socket.addEventListener('error', reject, { once: true })
-  })
-  return new CdpClient(socket)
-}
-
-async function evaluate(client, expression, awaitPromise = false) {
-  const result = await client.send('Runtime.evaluate', {
-    expression,
-    awaitPromise,
-    returnByValue: true,
-  })
-  if (result.exceptionDetails) throw new Error(result.exceptionDetails.text)
-  return result.result.value
-}
-
-async function waitForSlide(client, slideNumber) {
-  const deadline = Date.now() + 20_000
-  let lastState
-  while (Date.now() < deadline) {
-    const state = await evaluate(client, `(() => {
-      const element = document.querySelector('[data-slidev-no="${slideNumber}"]')
-      const rect = element?.getBoundingClientRect()
-      return {
-        href: location.href,
-        title: document.title,
-        bodyText: document.body?.innerText.slice(0, 160),
-        loading: document.querySelectorAll('.slidev-slide-loading').length,
-        slide: rect ? {
-          x: rect.left + window.scrollX,
-          y: rect.top + window.scrollY,
-          width: rect.width,
-          height: rect.height,
-        } : null,
-      }
-    })()`)
-    lastState = state
-    if (state.loading === 0 && state.slide?.width > 0 && state.slide?.height > 0) {
-      await evaluate(client, 'document.fonts.ready', true)
-      return state.slide
+  const fontState = await page.evaluate(number => {
+    const layout = document.querySelector(`[data-slidev-no="${number}"] .slidev-layout`)
+    const resources = performance.getEntriesByType('resource').map(entry => entry.name)
+    return {
+      family: layout ? getComputedStyle(layout).fontFamily : '',
+      regular: document.fonts.check('400 24px "Noto Sans TC Local"', '治理字型'),
+      bold: document.fonts.check('800 56px "Noto Sans TC Local"', '治理字型'),
+      localAssetRequested: resources.some(name => name.includes('NotoSansTC-VF')),
     }
-    await new Promise(resolve => setTimeout(resolve, 200))
+  }, slideNumber)
+  if (!fontState.family.startsWith('"Noto Sans TC Local"')
+    || !fontState.regular
+    || !fontState.bold
+    || !fontState.localAssetRequested) {
+    throw new Error(`Pinned font did not load on slide ${slideNumber}: ${JSON.stringify(fontState)}`)
   }
-  throw new Error(`Timed out waiting for Slidev page ${slideNumber}: ${JSON.stringify(lastState)}`)
-}
-
-async function stopBrowser(child) {
-  if (!child || child.exitCode !== null) return
-  const exited = new Promise(resolve => child.once('exit', resolve))
-  child.kill()
-  await Promise.race([
-    exited,
-    new Promise(resolve => setTimeout(resolve, 5_000)),
-  ])
+  return slide
 }
 
 export async function captureSlides(outputDirectory = defaultOutput) {
   const browser = await findBrowser()
-  const profileRoot = await mkdtemp(path.join(tmpdir(), 'slide-baseline-'))
   const { server, baseUrl } = await startStaticServer()
-  let browserProcess
-  let client
+  let browserInstance
 
   try {
     await rm(outputDirectory, { recursive: true, force: true })
     await mkdir(outputDirectory, { recursive: true })
-    const args = [
-      '--headless=new',
+    browserInstance = await chromium.launch({
+      executablePath: browser,
+      headless: true,
+      args: [
       '--disable-background-networking',
       '--disable-component-update',
-      '--disable-gpu',
       '--disable-sync',
       '--force-device-scale-factor=1',
       '--hide-scrollbars',
       '--no-default-browser-check',
       '--no-first-run',
-      `--user-data-dir=${path.join(profileRoot, 'browser-profile')}`,
-      '--remote-debugging-address=127.0.0.1',
-      '--remote-debugging-port=0',
-      'about:blank',
-    ]
-    if (process.platform === 'linux' && process.getuid?.() === 0) args.unshift('--no-sandbox')
-    const launched = await startBrowser(browser, args)
-    browserProcess = launched.child
-    const devtoolsHost = new URL(launched.browserWebSocketUrl).host
-    const targetResponse = await fetch(`http://${devtoolsHost}/json/new?${encodeURIComponent('about:blank')}`, { method: 'PUT' })
-    if (!targetResponse.ok) throw new Error(`Could not create Chrome target: ${targetResponse.status}`)
-    const target = await targetResponse.json()
-    client = await connectCdp(target.webSocketDebuggerUrl)
-    await client.send('Page.enable')
-    await client.send('Runtime.enable')
-    await client.send('Emulation.setDeviceMetricsOverride', {
-      width: 1280,
-      height: 720,
-      deviceScaleFactor: 1,
-      mobile: false,
+      ],
     })
+    const context = await browserInstance.newContext({
+      viewport: { width: 1280, height: 720 },
+      deviceScaleFactor: 1,
+    })
+    const page = await context.newPage()
     for (const slide of slideScreenshots) {
       const outputPath = path.join(outputDirectory, slide.filename)
-      await client.send('Page.navigate', { url: `${baseUrl}/${slide.number}?print=true` })
-      const container = await waitForSlide(client, slide.number)
-      const result = await client.send('Page.captureScreenshot', {
-        format: 'png',
-        fromSurface: true,
-        captureBeyondViewport: true,
-        clip: { ...container, scale: 1 },
-      })
-      const buffer = Buffer.from(result.data, 'base64')
+      await page.goto(`${baseUrl}/${slide.number}?print=true`, { waitUntil: 'domcontentloaded' })
+      const slideElement = await waitForSlide(page, slide.number)
+      const buffer = await slideElement.screenshot({ animations: 'disabled', type: 'png' })
       const image = PNG.sync.read(buffer)
       if (image.width !== 1280 || image.height !== 720) {
         throw new Error(`${slide.layout} captured at ${image.width}x${image.height}; expected 1280x720.`)
@@ -283,10 +174,8 @@ export async function captureSlides(outputDirectory = defaultOutput) {
       console.log(`Captured ${slide.layout}: ${path.relative(repoRoot, outputPath)}`)
     }
   } finally {
-    client?.close()
-    await stopBrowser(browserProcess)
+    await browserInstance?.close()
     await new Promise(resolve => server.close(resolve))
-    await rm(profileRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
   }
 
   return { browser, outputDirectory, slides: slideScreenshots }

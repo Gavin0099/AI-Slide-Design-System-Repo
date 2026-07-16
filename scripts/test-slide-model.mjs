@@ -55,6 +55,40 @@ const validExpandedDeck = {
         { title: '下層', detail: '負責輸出' },
       ],
     },
+    {
+      type: 'evidence',
+      eyebrow: 'EVIDENCE',
+      title: '證據',
+      claim: '測試已通過可重現的檢查。',
+      status: 'verified',
+      sources: ['模型測試', '視覺基準'],
+    },
+    {
+      type: 'metrics',
+      eyebrow: 'METRICS',
+      title: '指標',
+      metrics: [
+        { label: '版型', value: '10', detail: '受控 allowlist' },
+        { label: '差異', value: '0.000%', detail: '同環境像素比較' },
+      ],
+    },
+    {
+      type: 'decision',
+      eyebrow: 'DECISION',
+      title: '決策',
+      decision: '只有通過 review gate 的版型才能加入 allowlist。',
+      reasons: ['限制視覺漂移', '保存審查證據'],
+      owner: 'Maintainer',
+      nextAction: '建立下一個受控 renderer。',
+    },
+    {
+      type: 'closing',
+      eyebrow: 'CLOSING',
+      title: '收束',
+      summary: '語意與視覺責任已被清楚分離。',
+      actions: ['正式簡報套用', '規劃 PPTX'],
+      nextAction: '從相同模型輸出 editable PPTX。',
+    },
   ],
 }
 assert.deepEqual(validateDeck(validExpandedDeck), [])
@@ -70,4 +104,19 @@ const missingLayerDetail = structuredClone(validExpandedDeck)
 delete missingLayerDetail.slides[2].layers[1].detail
 assert.match(validateDeck(missingLayerDetail)[0], /layers\[1\]\.detail must be a non-empty string/)
 
-console.log('Semantic model tests passed: six layouts, boundary, and failure-path cases')
+const invalidEvidenceStatus = structuredClone(validExpandedDeck)
+invalidEvidenceStatus.slides[3].status = 'approved'
+assert.match(validateDeck(invalidEvidenceStatus)[0], /status must be one of verified, detected, unproven/)
+
+const tooManyMetrics = structuredClone(validExpandedDeck)
+tooManyMetrics.slides[4].metrics.push(
+  { label: '第三', value: '3', detail: '仍在範圍內' },
+  { label: '第四', value: '4', detail: '不應通過' },
+)
+assert.match(validateDeck(tooManyMetrics)[0], /exceeds 3 metrics/)
+
+const missingDecisionAction = structuredClone(validExpandedDeck)
+delete missingDecisionAction.slides[5].nextAction
+assert.match(validateDeck(missingDecisionAction)[0], /nextAction must be a non-empty string/)
+
+console.log('Semantic model tests passed: ten layouts, boundary, and failure-path cases')

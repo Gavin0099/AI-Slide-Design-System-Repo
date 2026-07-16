@@ -1,6 +1,15 @@
+@font-face {
+  font-family: "Noto Sans TC Local";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+  src: url("../fonts/NotoSansTC-VF.ttf") format("truetype");
+}
+
 .slidev-layout {
   color: var(--slide-ink);
-  font-family: Inter, "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  font-family: "Noto Sans TC Local", sans-serif;
+  font-synthesis: none;
   font-size: 24px;
   line-height: 1.45;
 }

@@ -45,6 +45,21 @@ const deck = {
         { title: '下層', detail: '輸出' },
       ],
     },
+    {
+      type: 'evidence', eyebrow: 'EVIDENCE', title: '證據', claim: '已驗證', status: 'verified', sources: ['模型', '截圖'],
+    },
+    {
+      type: 'metrics', eyebrow: 'METRICS', title: '指標', metrics: [
+        { label: '版型', value: '10', detail: '受控' },
+        { label: '差異', value: '0%', detail: '一致' },
+      ],
+    },
+    {
+      type: 'decision', eyebrow: 'DECISION', title: '決策', decision: '通過後加入。', reasons: ['可驗證'], owner: 'Owner', nextAction: '繼續。',
+    },
+    {
+      type: 'closing', eyebrow: 'CLOSING', title: '收束', summary: '完成。', actions: ['交付'], nextAction: '下一階段。',
+    },
   ],
 }
 
@@ -54,5 +69,7 @@ const horizontalRules = rendered.match(/^---$/gm) ?? []
 assert.equal(horizontalRules.length, deck.slides.length * 2)
 assert.doesNotMatch(rendered, /\n\n---\n\n---\n/)
 assert.equal((rendered.match(/^layout:/gm) ?? []).length, deck.slides.length)
+for (const layout of ['evidence', 'metrics', 'decision', 'closing'])
+  assert.match(rendered, new RegExp(`layout: "${layout}"`))
 
 console.log('Slidev renderer regression passed: semantic slides map one-to-one to page frontmatters')

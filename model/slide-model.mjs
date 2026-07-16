@@ -5,7 +5,13 @@ export const SLIDE_TYPES = Object.freeze([
   'problem-solution',
   'process',
   'architecture',
+  'evidence',
+  'metrics',
+  'decision',
+  'closing',
 ])
+
+export const EVIDENCE_STATUSES = Object.freeze(['verified', 'detected', 'unproven'])
 
 const LIMITS = Object.freeze({
   title: 22,
@@ -37,6 +43,18 @@ function structuredList(value, path, itemName) {
   value.forEach((item, index) => {
     text(item?.title, `${path}[${index}].title`, LIMITS.item)
     text(item?.detail, `${path}[${index}].detail`, LIMITS.subtitle)
+  })
+}
+
+function metricList(value, path) {
+  if (!Array.isArray(value) || value.length < 2)
+    throw new Error(`${path} must contain at least two metrics`)
+  if (value.length > LIMITS.listItems)
+    throw new Error(`${path} exceeds ${LIMITS.listItems} metrics`)
+  value.forEach((metric, index) => {
+    text(metric?.label, `${path}[${index}].label`, LIMITS.item)
+    text(metric?.value, `${path}[${index}].value`, 16)
+    text(metric?.detail, `${path}[${index}].detail`, LIMITS.subtitle)
   })
 }
 
@@ -90,6 +108,34 @@ export function validateDeck(deck) {
       if (slide.type === 'architecture') {
         text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)
         structuredList(slide.layers, `${path}.layers`, 'layer')
+      }
+
+      if (slide.type === 'evidence') {
+        text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)
+        text(slide.claim, `${path}.claim`, 72)
+        if (!EVIDENCE_STATUSES.includes(slide.status))
+          throw new Error(`${path}.status must be one of ${EVIDENCE_STATUSES.join(', ')}`)
+        list(slide.sources, `${path}.sources`)
+      }
+
+      if (slide.type === 'metrics') {
+        text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)
+        metricList(slide.metrics, `${path}.metrics`)
+      }
+
+      if (slide.type === 'decision') {
+        text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)
+        text(slide.decision, `${path}.decision`, 72)
+        list(slide.reasons, `${path}.reasons`)
+        text(slide.owner, `${path}.owner`, LIMITS.item)
+        text(slide.nextAction, `${path}.nextAction`, 72)
+      }
+
+      if (slide.type === 'closing') {
+        text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)
+        text(slide.summary, `${path}.summary`, 72)
+        list(slide.actions, `${path}.actions`)
+        text(slide.nextAction, `${path}.nextAction`, 72)
       }
     })
   }

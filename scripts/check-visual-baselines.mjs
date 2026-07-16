@@ -14,6 +14,10 @@ const expected = [
   { filename: '04-problem-solution.png', layout: 'problem-solution' },
   { filename: '05-process.png', layout: 'process' },
   { filename: '06-architecture.png', layout: 'architecture' },
+  { filename: '07-evidence.png', layout: 'evidence' },
+  { filename: '08-metrics.png', layout: 'metrics' },
+  { filename: '09-decision.png', layout: 'decision' },
+  { filename: '10-closing.png', layout: 'closing' },
 ]
 
 const manifest = JSON.parse(await readFile(path.join(baselineRoot, 'manifest.json'), 'utf8'))
@@ -36,4 +40,4 @@ for (const entry of manifest.files) {
   assert.equal(digest, entry.sha256, `${entry.filename} SHA-256 drifted`)
 }
 
-console.log('Visual baseline integrity passed: 6 approved 1280x720 screenshots match manifest SHA-256 values')
+console.log('Visual baseline integrity passed: 10 approved 1280x720 screenshots match manifest SHA-256 values')
