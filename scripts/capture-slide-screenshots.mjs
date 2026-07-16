@@ -14,6 +14,9 @@ export const slideScreenshots = [
   { number: 1, layout: 'cover', filename: '01-cover.png' },
   { number: 2, layout: 'key-message', filename: '02-key-message.png' },
   { number: 3, layout: 'comparison', filename: '03-comparison.png' },
+  { number: 4, layout: 'problem-solution', filename: '04-problem-solution.png' },
+  { number: 5, layout: 'process', filename: '05-process.png' },
+  { number: 6, layout: 'architecture', filename: '06-architecture.png' },
 ]
 
 const mimeTypes = new Map([

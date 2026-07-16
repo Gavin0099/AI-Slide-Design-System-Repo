@@ -2,6 +2,9 @@ export const SLIDE_TYPES = Object.freeze([
   'cover',
   'key-message',
   'comparison',
+  'problem-solution',
+  'process',
+  'architecture',
 ])
 
 const LIMITS = Object.freeze({
@@ -24,6 +27,17 @@ function list(value, path) {
   if (value.length > LIMITS.listItems)
     throw new Error(`${path} exceeds ${LIMITS.listItems} items`)
   value.forEach((item, index) => text(item, `${path}[${index}]`, LIMITS.item))
+}
+
+function structuredList(value, path, itemName) {
+  if (!Array.isArray(value) || value.length < 2)
+    throw new Error(`${path} must contain at least two ${itemName}s`)
+  if (value.length > LIMITS.listItems)
+    throw new Error(`${path} exceeds ${LIMITS.listItems} ${itemName}s`)
+  value.forEach((item, index) => {
+    text(item?.title, `${path}[${index}].title`, LIMITS.item)
+    text(item?.detail, `${path}[${index}].detail`, LIMITS.subtitle)
+  })
 }
 
 export function validateDeck(deck) {
@@ -59,6 +73,23 @@ export function validateDeck(deck) {
         text(slide.right?.title, `${path}.right.title`, LIMITS.item)
         list(slide.left?.items, `${path}.left.items`)
         list(slide.right?.items, `${path}.right.items`)
+      }
+
+      if (slide.type === 'problem-solution') {
+        text(slide.problem?.title, `${path}.problem.title`, LIMITS.item)
+        text(slide.solution?.title, `${path}.solution.title`, LIMITS.item)
+        list(slide.problem?.items, `${path}.problem.items`)
+        list(slide.solution?.items, `${path}.solution.items`)
+      }
+
+      if (slide.type === 'process') {
+        text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)
+        structuredList(slide.steps, `${path}.steps`, 'step')
+      }
+
+      if (slide.type === 'architecture') {
+        text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)
+        structuredList(slide.layers, `${path}.layers`, 'layer')
       }
     })
   }

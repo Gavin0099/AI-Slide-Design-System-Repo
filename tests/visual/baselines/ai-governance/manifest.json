@@ -7,7 +7,7 @@
   },
   "reviewStatus": "approved-human-review",
   "reviewedAt": "2026-07-16",
-  "reviewEvidence": "artifacts/evidence/visual-review/phase-b-baseline-review-20260716.md",
+  "reviewEvidence": "artifacts/evidence/visual-review/phase-b-p1-layout-review-20260716.md",
   "files": [
     {
       "filename": "01-cover.png",
@@ -29,6 +29,27 @@
       "width": 1280,
       "height": 720,
       "sha256": "d6ecd7f25812cd2afa0ad67d5ad9be67def6e6ba5ffd2582578f329c0629ea48"
+    },
+    {
+      "filename": "04-problem-solution.png",
+      "layout": "problem-solution",
+      "width": 1280,
+      "height": 720,
+      "sha256": "5cf3fb6f2545fb95b153c4c6cef848f127d8b08d73eb17ccb587f6a050882833"
+    },
+    {
+      "filename": "05-process.png",
+      "layout": "process",
+      "width": 1280,
+      "height": 720,
+      "sha256": "43b0489834ff5073d07f5161730d479906d005cc3f2dd15689a75ed3dd8f10c7"
+    },
+    {
+      "filename": "06-architecture.png",
+      "layout": "architecture",
+      "width": 1280,
+      "height": 720,
+      "sha256": "c007df2be811240f2f9cff3a4dd2341b4899722ac720f373c7bcb90b96e47944"
     }
   ]
 }

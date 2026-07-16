@@ -31,5 +31,37 @@ export default defineDeck({
         items: ['宣告範圍', '產生證據', '限制可宣稱內容'],
       },
     },
+    {
+      type: 'problem-solution',
+      title: '從自由排版轉成受控生成',
+      problem: {
+        title: '每頁重新設計',
+        items: ['版面風格漂移', '規則無法測試', '修改成本反覆發生'],
+      },
+      solution: {
+        title: '使用語意版型',
+        items: ['AI 選擇表達意圖', 'Renderer 固定結構', 'Theme 維持視覺一致'],
+      },
+    },
+    {
+      type: 'process',
+      eyebrow: 'CONTROLLED GENERATION',
+      title: '把內容意圖變成可審查投影片',
+      steps: [
+        { title: '定義訊息', detail: '每頁只保留一個核心觀點' },
+        { title: '選擇版型', detail: '只使用允許的語意 layout' },
+        { title: '產生證據', detail: 'Build、截圖與人工審查' },
+      ],
+    },
+    {
+      type: 'architecture',
+      eyebrow: 'SYSTEM ARCHITECTURE',
+      title: '三層約束形成一致輸出',
+      layers: [
+        { title: 'AI 決策層', detail: '決定訊息、版型與需要呈現的證據' },
+        { title: 'Semantic Model', detail: '限制欄位、內容密度與允許的版型' },
+        { title: 'Renderer + Theme', detail: '把模型轉成可重現的 Slidev 視覺' },
+      ],
+    },
   ],
 })

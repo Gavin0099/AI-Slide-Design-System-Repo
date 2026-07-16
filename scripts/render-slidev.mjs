@@ -68,6 +68,43 @@ function renderSlide(deckToRender, slide, index) {
     ].join('\n\n')
   }
 
+  if (slide.type === 'problem-solution') {
+    return [
+      frontmatter({
+        layout: 'problem-solution',
+        problemTitle: slide.problem.title,
+        solutionTitle: slide.solution.title,
+      }),
+      `# ${slide.title}`,
+      '::problem::',
+      bulletList(slide.problem.items),
+      '::solution::',
+      bulletList(slide.solution.items),
+    ].join('\n\n')
+  }
+
+  if (slide.type === 'process') {
+    return [
+      frontmatter({
+        layout: 'process',
+        eyebrow: slide.eyebrow,
+        steps: slide.steps,
+      }),
+      `# ${slide.title}`,
+    ].join('\n\n')
+  }
+
+  if (slide.type === 'architecture') {
+    return [
+      frontmatter({
+        layout: 'architecture',
+        eyebrow: slide.eyebrow,
+        layers: slide.layers,
+      }),
+      `# ${slide.title}`,
+    ].join('\n\n')
+  }
+
   throw new Error(`Unsupported slide type at index ${index}: ${slide.type}`)
 }
 

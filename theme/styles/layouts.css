@@ -187,3 +187,206 @@
   background: currentColor;
   content: "";
 }
+
+.governance-problem-solution {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 44px;
+}
+
+.governance-problem-solution__header h1,
+.governance-process__header h1,
+.governance-architecture__header h1 {
+  font-size: 50px;
+}
+
+.governance-problem-solution__header {
+  padding-left: 8px;
+}
+
+.governance-problem-solution__grid {
+  display: grid;
+  grid-template-columns: 1fr 72px 1fr;
+  align-items: stretch;
+}
+
+.governance-problem-solution__card {
+  padding: 34px 38px;
+  border: 1px solid var(--slide-line);
+  border-radius: var(--slide-radius-lg);
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 14px 44px rgb(31 47 74 / 8%);
+}
+
+.governance-problem-solution__card--problem {
+  border-top: 6px solid var(--slide-danger);
+  background: linear-gradient(150deg, #ffffff, #fff5f6);
+}
+
+.governance-problem-solution__card--solution {
+  border-top: 6px solid var(--slide-success);
+  background: linear-gradient(150deg, #ffffff, #f1fbf7);
+}
+
+.governance-problem-solution__label {
+  color: var(--slide-muted);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.governance-problem-solution__card h2 {
+  margin: 12px 0 24px;
+  color: var(--slide-ink);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.governance-problem-solution ul {
+  padding: 0;
+  font-size: 23px;
+}
+
+.governance-problem-solution li {
+  position: relative;
+  padding-left: 30px;
+  list-style: none;
+}
+
+.governance-problem-solution li::before {
+  position: absolute;
+  top: 0.68em;
+  left: 2px;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  content: "";
+}
+
+.governance-problem-solution__transition {
+  display: grid;
+  place-items: center;
+  color: var(--slide-accent);
+  font-size: 38px;
+  font-weight: 800;
+}
+
+.governance-process {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 48px;
+}
+
+.governance-process__header h1,
+.governance-architecture__header h1 {
+  margin-top: 16px;
+}
+
+.governance-process__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--process-columns), minmax(0, 1fr));
+  align-items: stretch;
+  gap: 26px;
+}
+
+.governance-process__steps::before {
+  position: absolute;
+  top: 42px;
+  right: 13%;
+  left: 13%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--slide-accent), var(--slide-cyan));
+  content: "";
+}
+
+.governance-process__step {
+  position: relative;
+  z-index: 1;
+  padding: 26px 28px 32px;
+  border: 1px solid var(--slide-line);
+  border-radius: var(--slide-radius-lg);
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 14px 38px rgb(31 47 74 / 8%);
+}
+
+.governance-process__number {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  margin-bottom: 32px;
+  border: 7px solid var(--slide-bg);
+  border-radius: 50%;
+  background: var(--slide-accent);
+  color: white;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.governance-process__step h2 {
+  margin: 0 0 14px;
+  color: var(--slide-ink);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.governance-process__step p {
+  color: var(--slide-muted);
+  font-size: 19px;
+  line-height: 1.55;
+}
+
+.governance-architecture {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 34px;
+}
+
+.governance-architecture__layers {
+  display: grid;
+  gap: 14px;
+}
+
+.governance-architecture__layer {
+  display: grid;
+  grid-template-columns: 76px 260px 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 28px;
+  border: 1px solid var(--slide-line);
+  border-left: 7px solid var(--slide-accent);
+  border-radius: var(--slide-radius-sm);
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 10px 32px rgb(31 47 74 / 7%);
+}
+
+.governance-architecture__layer:nth-child(2) {
+  border-left-color: var(--slide-cyan);
+  transform: translateX(28px);
+}
+
+.governance-architecture__layer:nth-child(3) {
+  border-left-color: var(--slide-success);
+  transform: translateX(56px);
+}
+
+.governance-architecture__index {
+  color: var(--slide-accent);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.governance-architecture__layer h2 {
+  margin: 0;
+  color: var(--slide-ink);
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.governance-architecture__layer p {
+  color: var(--slide-muted);
+  font-size: 19px;
+}

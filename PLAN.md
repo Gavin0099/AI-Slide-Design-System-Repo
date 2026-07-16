@@ -25,12 +25,12 @@
 - [x] Implement `cover`, `key-message`, and `comparison` layouts
 - [x] Add deterministic render, lint, build, and CI commands
 - [x] Add screenshot-based visual regression after the first layout set is reviewed
+- [x] Add and visually approve `problem-solution`, `process`, and `architecture`
 
 ## Backlog
 
 <!-- Required: prioritized items not yet started -->
 
-- P1: Add `problem-solution`, `process`, and `architecture` layouts
 - P1: Pin cross-platform font assets before enforcing pixel diffs in CI
 - P2: Add `evidence`, `metrics`, `decision`, and `closing` layouts
 - P2: Add an editable PptxGenJS renderer from the same semantic model
@@ -43,6 +43,7 @@
 - 2026-07-16: Treat `decks/*/deck.mjs` as source and generated `slides.md` as renderer output.
 - 2026-07-16: Keep editable PPTX outside Phase A; a future renderer must consume the same semantic model.
 - 2026-07-16: Approve 1280x720 Chrome screenshot baselines for the first three layouts; keep cross-platform pixel enforcement out of CI until fonts are pinned.
+- 2026-07-16: Expand the controlled library to six layouts and require each new layout to enter the same screenshot manifest before approval.
 
 ## Known Risks
 
