@@ -5,20 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "npm run render && slidev decks/ai-governance/slides.md",
-    "render": "node scripts/render-slidev.mjs",
+    "content:build": "node scripts/render-content.mjs",
+    "content:check": "node scripts/render-content.mjs --check",
+    "content:test": "node scripts/test-content-markdown.mjs",
+    "content:pptx": "npm run pptx:build",
+    "render": "npm run content:build && node scripts/render-slidev.mjs",
     "render:check": "node scripts/render-slidev.mjs --check",
     "lint": "node scripts/lint-slides.mjs",
     "font:check": "node scripts/check-font-assets.mjs",
     "model:test": "node scripts/test-slide-model.mjs",
     "renderer:test": "node scripts/test-render-slidev.mjs",
-    "pptx:build": "node scripts/render-pptx.mjs",
+    "pptx:build": "npm run content:build && node scripts/render-pptx.mjs",
     "pptx:test": "node scripts/test-render-pptx.mjs",
     "build": "npm run render && slidev build decks/ai-governance/slides.md --out ../../dist/ai-governance",
     "visual:capture": "npm run build && node scripts/capture-slide-screenshots.mjs",
     "visual:baseline:update": "npm run build && node scripts/visual-regression.mjs --update",
     "visual:baseline:check": "node scripts/check-visual-baselines.mjs",
     "visual:test": "npm run build && node scripts/visual-regression.mjs",
-    "check": "npm run font:check && npm run model:test && npm run renderer:test && npm run pptx:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run build"
+    "check": "npm run font:check && npm run content:check && npm run content:test && npm run model:test && npm run renderer:test && npm run pptx:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run build"
   },
   "devDependencies": {
     "@slidev/cli": "52.18.0",

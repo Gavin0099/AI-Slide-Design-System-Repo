@@ -23,6 +23,10 @@ function bulletList(items) {
   return items.map(item => `- ${item}`).join('\n')
 }
 
+function normalizeLineEndings(value) {
+  return value.replaceAll('\r\n', '\n').replaceAll('\r', '\n')
+}
+
 function renderSlide(deckToRender, slide, index) {
   if (slide.type === 'cover') {
     return [
@@ -182,7 +186,7 @@ async function main() {
       process.exit(1)
     }
 
-    if (current !== rendered) {
+    if (normalizeLineEndings(current) !== rendered) {
       console.error('Generated Slidev Markdown is stale. Run npm run render.')
       process.exit(1)
     }

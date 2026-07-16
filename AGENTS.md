@@ -330,9 +330,36 @@ Prompt yourself:
 - What changes are safe enough to keep in a fast path?
 -->
 
-- HIGH: changes that publish artifacts, introduce an editable PPTX renderer, or alter the public Semantic Slide Model incompatibly.
-- MEDIUM: changes to `model/**`, `scripts/render-slidev.mjs`, theme layouts, design tokens, or dependency versions.
+- HIGH: changes that publish artifacts, introduce a renderer, change generated-output ownership, or alter the public Content Markdown / Semantic Slide Model incompatibly.
+- MEDIUM: backward-compatible changes to `model/**`, renderer scripts, theme layouts, design tokens, or dependency versions.
 - LOW: documentation and example-deck copy changes that do not alter the semantic model or renderer behavior.
+
+## Repository Architecture and Source of Truth
+
+- `decks/**/content.md` is the canonical human-authored content source.
+- `model/content-markdown.mjs` owns the Markdown input contract and projection into the Semantic Slide Model.
+- `model/slide-model.mjs` owns the canonical Semantic Slide Model allowlist, validation rules, and density limits.
+- `theme/**` owns reusable visual tokens, components, layouts, and the governed font asset.
+- Renderers consume the generated Semantic Model module; they must not reinterpret `content.md` independently.
+
+## Artifact Ownership
+
+- `decks/**/content.md`: canonical source; edit this file for deck content.
+- `decks/**/deck.mjs`: generated Semantic Model module; never hand-edit.
+- `decks/**/slides.md`: generated Slidev intermediate; never hand-edit.
+- `dist/**`: generated delivery artifacts; never use them as source input.
+- Exported PPTX files are outputs, not round-trip sources. Manual PowerPoint edits are not preserved unless represented in `content.md` or the shared model/theme/renderer layer first.
+
+## Semantic Compatibility Rules
+
+A Content Markdown or Semantic Slide Model change is breaking when it removes or renames a public field or layout, changes an existing field's type or meaning, makes a previously valid committed `content.md` fail, changes default rendering for an existing deck, or changes generated ownership/output paths. Adding an optional field or layout is backward-compatible only when existing content, generated modules, and both renderers remain unchanged under regression tests.
+
+## Render and Visual Verification
+
+- Content parser changes must prove deterministic `content.md -> deck.mjs` projection and include failure-path fixtures for malformed headings, missing fields, structured items, and model limits.
+- Renderer changes must prove one-to-one slide projection, complete semantic text, expected editable-object ownership, and absence of flattened slide pictures unless a reviewed layout explicitly requires raster content.
+- Layout or visible example-content changes require approved 1280x720 baselines, zero-diff recapture in the reviewed environment, and original-resolution inspection for overflow, clipping, wrapping, hierarchy, and unintended overlap.
+- PPTX delivery additionally requires full-size rendering of every page and `slides_test.py` overflow inspection. Report font substitution and cross-platform behavior as claim boundaries unless separately verified.
 
 ## Must-Test Paths
 <!-- governance:key=must_test_paths -->
@@ -348,9 +375,10 @@ Prompt yourself:
 - Which user-visible or hardware-facing flows need explicit coverage?
 -->
 
-- `model/**` and `scripts/**`: run `npm run lint` and `npm run render:check`.
+- `model/**`, `scripts/render-content.mjs`, and `decks/**/content.md`: run `npm run content:test`, `npm run lint`, and `npm run render:check`.
+- PPTX renderer changes: run `npm run pptx:test`, render every slide, and run `slides_test.py` before delivery.
 - `theme/layouts/**`, `theme/components/**`, and `theme/styles/**`: run `npm run build`.
-- `decks/**/deck.mjs`: run `npm run check` so semantic constraints and generated output are both verified.
+- Generated `decks/**/deck.mjs` or `decks/**/slides.md`: run `npm run check` so content freshness, semantic constraints, and generated output are verified.
 
 ## L1 → L2 Escalation Triggers
 <!-- governance:key=escalation_triggers -->
@@ -385,7 +413,7 @@ Prompt yourself:
 - What "cleanup" or "shortcut" behaviors have already caused pain here?
 -->
 
-- Do not hand-edit generated `decks/*/slides.md`; edit the corresponding `deck.mjs` source and rerun the renderer.
+- Do not hand-edit generated `decks/*/deck.mjs` or `decks/*/slides.md`; edit the corresponding `content.md` and rerun `npm run content:build` / `npm run render`.
 - Do not add arbitrary per-deck CSS when an existing token, component, or layout can express the intent.
 - Do not label a claim `Verified` without an evidence reference or an explicit source note.
 - Do not commit generated output outside `dist/`, credentials, private source documents, or unlicensed third-party assets.
