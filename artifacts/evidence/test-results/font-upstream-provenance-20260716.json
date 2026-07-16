@@ -1,0 +1,18 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run font:provenance:verify",
+  "exit_code": 0,
+  "started_at": "2026-07-16T11:47:03Z",
+  "finished_at": "2026-07-16T11:47:15Z",
+  "runner": "codex-windows-network",
+  "linked_commit": "6756b7989268370dddfc1aeda338bc5f4db95bea",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/font-upstream-provenance-20260716.txt"
+  ],
+  "cannot_claim": [
+    "remote availability for future verification runs",
+    "cryptographic reviewer identity",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}

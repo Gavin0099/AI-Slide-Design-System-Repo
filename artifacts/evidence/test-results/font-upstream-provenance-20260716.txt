@@ -1,0 +1,18 @@
+Font upstream provenance evidence
+started_at=2026-07-16T11:47:03Z
+finished_at=2026-07-16T11:47:15Z
+linked_commit=6756b7989268370dddfc1aeda338bc5f4db95bea
+scope=review finding 4 font provenance claim accuracy and upstream verification
+source_repository=https://github.com/google/fonts
+source_commit=b950a7257470b900078f2bf3223823a8602de7e1
+source_path=ofl/notosanstc
+upstream_verification=npm run font:provenance:verify; exit=0
+NotoSansTC[wght].ttf=11941968 bytes; sha256=864727d210d54f2537bbe23b3a839436c3992af72de9322af5270897246bd44f
+OFL.txt=4388 bytes; sha256=1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9
+METADATA.pb=1060 bytes; sha256=213cbcf6933d48c55d36c95d8253b053cd44d6099f275a691a510b234e325e43
+offline_regression=npm run font:provenance:test; exit=0
+full_check=npm run check; started_at=2026-07-16T11:47:34Z; finished_at=2026-07-16T11:47:57Z; exit=0; ten layouts at 0.000% pixel difference
+network_observation=an earlier run hit its 60-second client timeout before any asset completed; the verifier now uses a 120-second timeout with explicit timeout diagnostics and regression coverage
+gate_decision=network verification remains outside check and check:ci; offline integrity and verifier regression remain deterministic default gates
+claim_boundary=font:check proves only repo-local asset-to-manifest integrity; successful font:provenance:verify proves bytes fetched from the configured official repository at the configured commit matched local bytes during this run
+cannot_claim=future remote availability, cryptographic reviewer identity, or tamper-proof provenance metadata
