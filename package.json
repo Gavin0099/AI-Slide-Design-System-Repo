@@ -1,0 +1,19 @@
+{
+  "name": "ai-slide-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run render && slidev decks/ai-governance/slides.md",
+    "render": "node scripts/render-slidev.mjs",
+    "render:check": "node scripts/render-slidev.mjs --check",
+    "lint": "node scripts/lint-slides.mjs",
+    "model:test": "node scripts/test-slide-model.mjs",
+    "build": "npm run render && slidev build decks/ai-governance/slides.md --out ../../dist/ai-governance",
+    "check": "npm run model:test && npm run lint && npm run render:check && npm run build"
+  },
+  "devDependencies": {
+    "@slidev/cli": "52.18.0",
+    "vue": "3.5.39"
+  }
+}

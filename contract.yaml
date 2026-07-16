@@ -1,0 +1,19 @@
+name: ai-slide-design-system-contract
+plugin_version: "1.0.0"
+framework_interface_version: "1"
+framework_compatible: ">=1.0.0,<2.0.0"
+domain: ai-slide-design-system
+risk_tier: medium
+documents:
+  - AGENTS.base.md
+  - PLAN.md
+  - governance/TESTING.md
+  - governance/ARCHITECTURE.md
+  - rules/slide-writing-guide.md
+  - rules/layout-selection.md
+ai_behavior_override:
+  - AGENTS.base.md
+rule_roots:
+  - governance/rules
+validators:
+  - scripts/lint-slides.mjs

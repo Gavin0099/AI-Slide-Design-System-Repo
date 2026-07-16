@@ -1,0 +1,40 @@
+.slidev-layout {
+  color: var(--slide-ink);
+  font-family: Inter, "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  font-size: 24px;
+  line-height: 1.45;
+}
+
+.slidev-layout h1 {
+  margin: 0;
+  color: var(--slide-ink);
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.slidev-layout h2 {
+  margin: 18px 0 0;
+  color: var(--slide-muted);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.slidev-layout p,
+.slidev-layout ul {
+  margin: 0;
+}
+
+.slidev-layout li + li {
+  margin-top: 18px;
+}
+
+.governance-eyebrow {
+  color: var(--slide-accent);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}

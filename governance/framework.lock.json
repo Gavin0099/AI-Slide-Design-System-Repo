@@ -1,0 +1,17 @@
+{
+  "framework_repo": "https://GavinWu@gli-gitlab-ee.genesyslogic.com.tw/CRD/SW/ai-governance-framework/ai-governance-framework.git",
+  "adopted_release": "1.2.0",
+  "adopted_commit": "634c9b8617bd792fb8dcd45e89ecfbb23eb8e69a",
+  "framework_interface_version": "1",
+  "framework_compatible": ">=1.0.0,<2.0.0",
+  "framework_baseline_version": "2026-07-16",
+  "adopted_surfaces": [
+    "submodule_pin",
+    "hooks_config",
+    "framework_lock",
+    "agents_calibration",
+    "domain_contract",
+    "validator_surface"
+  ],
+  "updated_at": "2026-07-16T11:35:00+08:00"
+}
