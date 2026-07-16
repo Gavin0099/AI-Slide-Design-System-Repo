@@ -123,8 +123,29 @@
 }
 
 .governance-comparison ul {
-  padding-left: 1.2em;
+  padding-left: 0;
   font-size: 25px;
+}
+
+.governance-comparison li {
+  position: relative;
+  padding-left: 34px;
+  list-style: none;
+}
+
+.governance-comparison li::before {
+  position: absolute;
+  top: 0.62em;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--slide-muted);
+  content: "";
+}
+
+.governance-comparison__column--right li::before {
+  background: var(--slide-accent);
 }
 
 .verification-gap {

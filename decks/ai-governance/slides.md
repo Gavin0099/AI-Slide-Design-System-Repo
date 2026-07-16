@@ -11,8 +11,6 @@ eyebrow: "AI SLIDE DESIGN SYSTEM"
 ## 從自由排版，轉向可重現的語意版型
 
 ---
-
----
 layout: "key-message"
 eyebrow: "核心觀念"
 visual: "verification-gap"
@@ -25,8 +23,6 @@ visual: "verification-gap"
 ::evidence::
 
 缺少外部驗證時，完成宣稱仍然只是模型的自我陳述。
-
----
 
 ---
 layout: "comparison"

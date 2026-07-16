@@ -1,6 +1,6 @@
 <script setup lang="ts">
 withDefaults(defineProps<{ label?: string }>(), {
-  label: 'Evidence',
+  label: '證據',
 })
 </script>
 
@@ -19,7 +19,7 @@ withDefaults(defineProps<{ label?: string }>(), {
   color: white;
   font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 </style>

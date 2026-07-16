@@ -1,0 +1,34 @@
+{
+  "deck": "ai-governance",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "deviceScaleFactor": 1
+  },
+  "reviewStatus": "approved-human-review",
+  "reviewedAt": "2026-07-16",
+  "reviewEvidence": "artifacts/evidence/visual-review/phase-b-baseline-review-20260716.md",
+  "files": [
+    {
+      "filename": "01-cover.png",
+      "layout": "cover",
+      "width": 1280,
+      "height": 720,
+      "sha256": "43e01d076045a38670a2b2338cdcf0e0e29302a15883df78bfd4fe3f7f4a7ab2"
+    },
+    {
+      "filename": "02-key-message.png",
+      "layout": "key-message",
+      "width": 1280,
+      "height": 720,
+      "sha256": "1fe64344688715b4b1f6ced0f43221047101ac99e6e23a16b7ee1aac3f43a731"
+    },
+    {
+      "filename": "03-comparison.png",
+      "layout": "comparison",
+      "width": 1280,
+      "height": 720,
+      "sha256": "d6ecd7f25812cd2afa0ad67d5ad9be67def6e6ba5ffd2582578f329c0629ea48"
+    }
+  ]
+}
