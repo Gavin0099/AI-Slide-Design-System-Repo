@@ -1,38 +1,18 @@
 {
-  "schema": "visual-gate-remediation-evidence.v1",
-  "recordedAt": "2026-07-16T10:18:08Z",
-  "baseCommit": "a47ac9e1ccacd62069111844d6a82f1f95bc4175",
-  "scope": [
-    "semantic newline injection rejection",
-    "real deck Slidev structure regression",
-    "local current-render pixel gate",
-    "human visual authority binding"
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-16T10:22:34Z",
+  "finished_at": "2026-07-16T10:22:58Z",
+  "runner": "codex-windows",
+  "linked_commit": "b5c44045aa3764ef38317b6fbe1a99e195a7bcaf",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/visual-gate-remediation-20260716.txt"
   ],
-  "checks": [
-    {
-      "command": "npm run check",
-      "expectedExitCode": 0,
-      "actualExitCode": 0,
-      "result": "PASS",
-      "note": "All static, renderer, authority, build, and ten-layout pixel checks passed; every layout reported 0.000% pixel difference."
-    },
-    {
-      "command": "npm run check with --slide-bg=#ff00ff and --slide-ink=#ff00ff mutation",
-      "expectedExitCode": 1,
-      "actualExitCode": 1,
-      "result": "PASS",
-      "note": "The local gate reached visual:test and rejected the mutation; nine layouts reported 43.439% to 96.915% pixel difference."
-    },
-    {
-      "command": "npm run visual:authority:check",
-      "expectedExitCode": 0,
-      "actualExitCode": 0,
-      "result": "PASS",
-      "note": "Explicit human decision from Gavin0099 is bound to baseline manifest SHA-256 8b828b72f40ace6ef7dac97a33e654f8bda0243c06c4d4e67682337e84c059cd."
-    }
-  ],
-  "mutationRestored": true,
-  "restoredThemeBlob": "35197c6cbff69a7b7ff007e7d3a54d73d5dabaab",
-  "humanReviewEvidence": "artifacts/evidence/visual-review/visual-gate-remediation-review-20260716.md",
-  "claimBoundary": "Human visual approval is recorded in single-contributor mode; independent reviewer approval and cryptographic reviewer identity are not claimed."
+  "cannot_claim": [
+    "cross-platform pixel equivalence outside the reviewed Windows and Chrome environment",
+    "independent reviewer approval in single-contributor mode",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
 }

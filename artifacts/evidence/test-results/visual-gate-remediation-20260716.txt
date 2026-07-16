@@ -1,6 +1,7 @@
 Visual gate remediation evidence
-recorded_at=2026-07-16T10:18:08Z
-base_commit=a47ac9e1ccacd62069111844d6a82f1f95bc4175
+started_at=2026-07-16T10:22:34Z
+finished_at=2026-07-16T10:22:58Z
+linked_commit=b5c44045aa3764ef38317b6fbe1a99e195a7bcaf
 scope=review findings 1, 2, 3, and 5
 normal_check=npm run check; exit=0; ten layouts at 0.000% pixel difference
 mutation_check=npm run check with magenta background and ink; expected_exit=1; actual_exit=1
