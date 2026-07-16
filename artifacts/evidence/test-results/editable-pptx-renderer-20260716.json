@@ -1,0 +1,17 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-16T08:59:29Z",
+  "finished_at": "2026-07-16T08:59:39Z",
+  "runner": "codex-windows",
+  "linked_commit": "0b2057d2e50a0678de56c88403b0210a333bb4ae",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/editable-pptx-renderer-20260716.txt"
+  ],
+  "cannot_claim": [
+    "semantic correctness of the tested behavior",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}
