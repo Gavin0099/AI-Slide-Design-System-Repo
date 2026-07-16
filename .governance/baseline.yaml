@@ -11,18 +11,18 @@
 # ── PROVENANCE ────────────────────────────────────────────────────────────────
 schema_version: "1"
 baseline_version: 1.0.0
-source_commit: unknown
+source_commit: 0c2b08d7f48754d326ec4911d22586562b83b516
 framework_root: E:\BackUp\Git_EE\AI-Slide-Design-System-Repo\additional\ai-governance-framework
-initialized_at: 2026-07-16T03:15:55Z
+initialized_at: 2026-07-16T03:39:46Z
 initialized_by: governance_tools/adopt_governance.py
 
 # ── INTEGRITY ─────────────────────────────────────────────────────────────────
 # sha256.<file>: hash recorded at init/refresh time; "protected" files are hash-verified
 # overridable.<file>: protected = must not change | overridable = repo may extend freely
 sha256.AGENTS.base.md: f3daf5037a36606d546dc8d621dbb32963c6e3067f419187e4afd6f2d6dc14a7
-sha256.PLAN.md: d6f8a257670213b85ef4c55d9253f0c041902fa7e8088293ff1328cdf38e6be3
-sha256.contract.yaml: 162f317a66fd7bdd1b469129ed4e35329b664d3854267cfe0ac326b336c6b64d
-sha256.AGENTS.md: 4d61510bfb72dbb9052e02ef68ee7a69b90a6b87847c8ec5b908dbdbed2da516
+sha256.PLAN.md: 004f8140fc92a9708f4e6f1d014c963dc9ddf393401069a94e8fe9dc85742deb
+sha256.contract.yaml: b1d7ca43414969d461c9b00ba12cd7dca1f6907ba66432bdd67f6be6f76b8be0
+sha256.AGENTS.md: 2e6caf680fefbc8d7d3d9c5d9abb9908b61573d9d24d9262c79d34da8cd58789
 overridable.AGENTS.base.md: protected
 overridable.PLAN.md: overridable
 overridable.contract.yaml: overridable

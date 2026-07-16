@@ -1,0 +1,7 @@
+TASK_INTENT: Import AI Governance and deliver the approved Phase A Semantic Slide Model to Slidev vertical slice.
+WORK_COMPLETED: Pinned framework commit 634c9b86, adopted and calibrated repo governance, installed hooks, implemented three semantic layouts with deterministic rendering, and validated the model, renderer, build, drift, readiness, version compatibility, and runtime smoke paths.
+FILES_TOUCHED: governance onboarding surfaces, PLAN.md, AGENTS.md, contract.yaml, package files, model/, scripts/, theme/, decks/ai-governance/, rules/, artifacts/evidence/test-results/first-import-validation-20260716.md
+CHECKS_RUN: npm.cmd run check; hook_install_validator.py; quickstart_smoke.py; runtime_surface_manifest_smoke.py; external_repo_smoke.py; governance_version_check.py; governance_drift_checker.py; external_repo_readiness.py
+OPEN_RISKS: No screenshot visual regression exists yet; the approved GitLab framework source differs from the checker hard-coded GitHub canonical remote; no F-7 update receipt was produced; maturity summary does not recognize the Markdown runtime evidence report as retained runtime-smoke evidence.
+NOT_DONE: Additional layouts, screenshot review, PDF/PPTX export validation, editable PptxGenJS renderer, F-7 update evidence, and remote-head freshness proof.
+RECOMMENDED_MEMORY_UPDATE: Record Phase A governance onboarding, buildable three-layout vertical slice, validation evidence, commit 0c2b08d, and Phase B screenshot review as the next step.
