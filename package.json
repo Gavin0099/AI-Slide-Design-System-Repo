@@ -11,18 +11,22 @@
     "font:check": "node scripts/check-font-assets.mjs",
     "model:test": "node scripts/test-slide-model.mjs",
     "renderer:test": "node scripts/test-render-slidev.mjs",
+    "pptx:build": "node scripts/render-pptx.mjs",
+    "pptx:test": "node scripts/test-render-pptx.mjs",
     "build": "npm run render && slidev build decks/ai-governance/slides.md --out ../../dist/ai-governance",
     "visual:capture": "npm run build && node scripts/capture-slide-screenshots.mjs",
     "visual:baseline:update": "npm run build && node scripts/visual-regression.mjs --update",
     "visual:baseline:check": "node scripts/check-visual-baselines.mjs",
     "visual:test": "npm run build && node scripts/visual-regression.mjs",
-    "check": "npm run font:check && npm run model:test && npm run renderer:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run build"
+    "check": "npm run font:check && npm run model:test && npm run renderer:test && npm run pptx:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run build"
   },
   "devDependencies": {
     "@slidev/cli": "52.18.0",
+    "jszip": "3.10.1",
     "pixelmatch": "7.2.0",
     "playwright-core": "1.61.1",
     "pngjs": "7.0.0",
+    "pptxgenjs": "4.0.1",
     "vue": "3.5.39"
   }
 }

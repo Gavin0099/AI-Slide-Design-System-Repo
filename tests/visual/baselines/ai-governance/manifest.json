@@ -7,7 +7,7 @@
   },
   "reviewStatus": "approved-human-review",
   "reviewedAt": "2026-07-16",
-  "reviewEvidence": "artifacts/evidence/visual-review/phase-b-p2-font-layout-review-20260716.md",
+  "reviewEvidence": "artifacts/evidence/visual-review/phase-c-editable-pptx-review-20260716.md",
   "files": [
     {
       "filename": "01-cover.png",
@@ -49,14 +49,14 @@
       "layout": "architecture",
       "width": 1280,
       "height": 720,
-      "sha256": "90a9a32eb345969fb5965a5dd00f19dc902648a2b23833c7e71dc242769270c6"
+      "sha256": "244cf5af06b1694885645c177b8d776cef599f8934ef6eda3ea37c8db785a982"
     },
     {
       "filename": "07-evidence.png",
       "layout": "evidence",
       "width": 1280,
       "height": 720,
-      "sha256": "3e8ad9341c63c696c0a96dab91074dc0d0ef2a5361523209e0427939aa445009"
+      "sha256": "096a5714211393e348e7391fc668cac81ddf5e28552a4fb656a9eaea23e41523"
     },
     {
       "filename": "08-metrics.png",
@@ -70,14 +70,14 @@
       "layout": "decision",
       "width": 1280,
       "height": 720,
-      "sha256": "35b08126d48fe112ad775acfbc31331eaef621357e6b4cf9bf5c5ff0fc1a2f2f"
+      "sha256": "1fb1a2149e5cb88a741c18ba3729cb180bff742777018fa2f0174d77fb959ced"
     },
     {
       "filename": "10-closing.png",
       "layout": "closing",
       "width": 1280,
       "height": 720,
-      "sha256": "5c5bfd0ea71b255de207c15516ef20455d2994a594987dbf4699c45a6b026697"
+      "sha256": "21c9ec18491120df5c3e47b8917d16aa67c9989e940256465f5b5044060a3a40"
     }
   ]
 }
