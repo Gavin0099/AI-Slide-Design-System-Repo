@@ -2,3 +2,6 @@
 /tests/visual/baselines/ @Gavin0099
 /artifacts/evidence/visual-review/ @Gavin0099
 /scripts/*visual* @Gavin0099
+/theme/fonts/ @Gavin0099
+/scripts/*font* @Gavin0099
+/docs/FONT_PROVENANCE.md @Gavin0099

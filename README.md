@@ -36,6 +36,7 @@ npm install
 npm run dev
 npm run check
 npm run check:ci
+npm run font:provenance:verify
 npm run visual:test
 npm run visual:authority:check
 npm run content:pptx
@@ -50,7 +51,8 @@ npm run pptx:test
 - `npm run render`：先由 `content.md` 更新 `deck.mjs`，再產生 Slidev Markdown。
 - `npm run render:check`：檢查 generated Markdown 是否與 semantic source 一致。
 - `npm run lint`：檢查版型 allowlist、標題長度與內容密度。
-- `npm run font:check`：驗證 repo-local Noto Sans TC、OFL 授權、來源 commit、檔案大小與 SHA-256。
+- `npm run font:check`：離線驗證 repo-local Noto Sans TC、OFL、metadata、檔案大小與 committed manifest SHA-256；只記錄來源欄位，不會連線或證明檔案來自該 upstream commit。
+- `npm run font:provenance:verify`：從官方 `google/fonts` 固定 commit 下載三個 source assets，逐 byte 與 SHA-256 比對本地檔案；此命令依賴網路，因此不屬於預設 `check` / `check:ci`。
 - `npm run build`：輸出靜態 Slidev deck 到 `dist/ai-governance/`。
 - `npm run visual:baseline:update`：以 1280×720 重新產生十張 baseline，並將 review status 重設為待人工審查。
 - `npm run check`：本機完整 gate，包含目前畫面相對 baseline 的 pixel regression。

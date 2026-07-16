@@ -378,6 +378,7 @@ Prompt yourself:
 - `model/**`, `scripts/render-content.mjs`, and `decks/**/content.md`: run `npm run content:test`, `npm run lint`, and `npm run render:check`.
 - PPTX renderer changes: run `npm run pptx:test`, render every slide, and run `slides_test.py` before delivery.
 - `theme/layouts/**`, `theme/components/**`, and `theme/styles/**`: run `npm run build`.
+- `theme/fonts/**`: run `npm run font:check`; if the source repository, commit, or source path changes, also run `npm run font:provenance:verify` and record the network evidence.
 - Generated `decks/**/deck.mjs` or `decks/**/slides.md`: run `npm run check` so content freshness, semantic constraints, and generated output are verified.
 
 ## L1 → L2 Escalation Triggers
@@ -416,4 +417,5 @@ Prompt yourself:
 - Do not hand-edit generated `decks/*/deck.mjs` or `decks/*/slides.md`; edit the corresponding `content.md` and rerun `npm run content:build` / `npm run render`.
 - Do not add arbitrary per-deck CSS when an existing token, component, or layout can express the intent.
 - Do not label a claim `Verified` without an evidence reference or an explicit source note.
+- Do not claim `npm run font:check` proves upstream provenance; only the network-dependent `npm run font:provenance:verify` compares local bytes with the pinned official commit.
 - Do not commit generated output outside `dist/`, credentials, private source documents, or unlicensed third-party assets.

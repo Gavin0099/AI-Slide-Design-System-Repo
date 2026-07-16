@@ -28,4 +28,5 @@ assert.match(typography, /font-family:\s*"Noto Sans TC Local"/)
 assert.match(typography, /url\("\.\.\/fonts\/NotoSansTC-VF\.ttf"\)/)
 assert.doesNotMatch(typography, /Microsoft JhengHei|PingFang|system-ui/)
 
-console.log('Font asset integrity passed: pinned Noto Sans TC Local, OFL, metadata, and SHA-256 values')
+console.log('Local font asset integrity passed: repo files match committed manifest sizes and SHA-256 values')
+console.log('Claim boundary: this command records but does not contact or authenticate the upstream source commit')
