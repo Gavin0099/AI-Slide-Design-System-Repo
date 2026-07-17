@@ -1,0 +1,25 @@
+Cross-platform Microsoft PowerPoint render evidence
+linked_commit=f82fb74833901da7285635a83daae807079eb3aa
+scope=decide whether Windows and macOS PowerPoint can share one pixel baseline
+windows_application_id=Microsoft.Office.POWERPNT.EXE.15
+windows_powerpoint_version=16.0.20131.20126
+windows_font=Noto Sans TC installed via NotoSansTC-VF.ttf
+windows_license_status=unlicensed_or_sign_in_required
+windows_capture_status=BLOCKED before deck open/export
+windows_render_receipts=0
+macos_host_attached=false
+macos_capture_status=NOT RUN
+macos_render_receipts=0
+minimum_runs_per_platform=2
+decision=not_enough_evidence
+shared_baseline_candidate=false
+recommended_ci_policy=keep shared Office pixel baseline disabled
+substitute_renderers=not accepted as Microsoft PowerPoint evidence
+office_evidence_regression=PASS
+slidev_visual_regression=10/10 PASS at 0.000% pixel difference
+check_started=2026-07-17T03:47:18Z
+check_finished=2026-07-17T03:47:47Z
+check_command=npm.cmd run check
+check_exit=0
+official_export_method=https://learn.microsoft.com/en-us/office/vba/api/powerpoint.presentation.export
+claim_boundary=no Office-rendered PNG exists on either required platform, so pixel equality, per-platform difference, and baseline approval are not claimed

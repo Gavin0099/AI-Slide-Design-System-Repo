@@ -1,0 +1,62 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-17T03:47:18Z",
+  "finished_at": "2026-07-17T03:47:47Z",
+  "runner": "codex-windows-office-probe",
+  "linked_commit": "f82fb74833901da7285635a83daae807079eb3aa",
+  "scope": "Windows and macOS Microsoft PowerPoint render evidence and shared pixel-baseline decision",
+  "windows_office": {
+    "application_id": "Microsoft.Office.POWERPNT.EXE.15",
+    "executable": "C:\\Program Files\\Microsoft Office\\Root\\Office16\\POWERPNT.EXE",
+    "product_version": "16.0.20131.20126",
+    "font_registry": "Noto Sans TC (TrueType) -> NotoSansTC-VF.ttf",
+    "license_status": "unlicensed_or_sign_in_required",
+    "capture_status": "blocked",
+    "render_receipts": 0,
+    "reason": "PowerPoint displayed Unlicensed Product and a sign-in-to-start-using-PowerPoint gate before opening the governed deck. No PNG export was performed."
+  },
+  "macos_office": {
+    "host_attached": false,
+    "capture_status": "not_run",
+    "render_receipts": 0,
+    "reason": "No macOS host with Microsoft PowerPoint is attached to this workspace."
+  },
+  "decision": {
+    "decision_schema": "office_baseline_decision.v0.1",
+    "status": "not_enough_evidence",
+    "shared_baseline_candidate": false,
+    "recommended_ci_policy": "keep shared Office pixel baseline disabled",
+    "required_runs_per_platform": 2,
+    "windows_runs": 0,
+    "macos_runs": 0
+  },
+  "harness_regression": {
+    "status": "PASS",
+    "covered": [
+      "host OS attestation rejects macOS receipts on win32",
+      "receipt manifest is recomputed from contiguous per-slide PNG hashes",
+      "PowerPoint licensing and Noto Sans TC installation must be attested",
+      "two unique run IDs are required per platform",
+      "same PPTX SHA-256, slide count, and dimensions are required",
+      "within-platform instability blocks enforcement",
+      "stable cross-platform mismatch selects per-platform baselines",
+      "exact stable cross-platform hashes produce only a human-review candidate"
+    ]
+  },
+  "slidev_regression": "10/10 existing browser baselines PASS at 0.000% pixel difference",
+  "official_method_reference": "https://learn.microsoft.com/en-us/office/vba/api/powerpoint.presentation.export",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/cross-platform-office-render-20260717.txt"
+  ],
+  "cannot_claim": [
+    "Windows Microsoft PowerPoint rendered the deck",
+    "macOS Microsoft PowerPoint rendered the deck",
+    "Windows and macOS Office pixels are equal or different",
+    "a shared or per-platform Office baseline is approved",
+    "operator identity or PowerPoint license authenticity beyond the observed sign-in gate",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}
