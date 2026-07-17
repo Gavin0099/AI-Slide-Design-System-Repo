@@ -1,0 +1,19 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check; npm.cmd run pptx:build; render_slides.py; slides_test.py",
+  "exit_code": 0,
+  "started_at": "2026-07-17T02:12:28Z",
+  "finished_at": "2026-07-17T02:13:45Z",
+  "runner": "codex-windows-artifact-tool",
+  "linked_commit": "3f79a7489762236edd484661f80688a268766acd",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/fixed-cardinality-contract-20260717.txt"
+  ],
+  "cannot_claim": [
+    "adaptive visual support for one-, two-, or more-than-three-item layouts",
+    "new human visual approval for this Semantic Model contract slice",
+    "cross-platform PowerPoint rendering or font substitution equivalence",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}

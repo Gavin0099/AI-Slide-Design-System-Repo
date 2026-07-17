@@ -1,0 +1,23 @@
+Fixed three-slot cardinality contract evidence
+linked_commit=3f79a7489762236edd484661f80688a268766acd
+scope=review finding 7 array-layout cardinality coverage
+decision=all array-driven layouts require exactly three entries
+compatibility=breaking Semantic Model change; previously valid one- and two-entry arrays now fail validation
+repository_migration=not required; all ten committed array fields already contain exactly three entries
+diagnostic=old minimum-cardinality PPTX render exposed left-anchored one-item cards, empty third flow slots, and large unbalanced unused regions
+baseline_decision=no minimum-cardinality baselines added because those states are invalid and fail before rendering
+mutation_regression=10 array fields reject one underfilled and one overfilled mutation each, 20 mutations total
+renderer_boundary=both Slidev and PptxGenJS renderers reject an underfilled real-deck mutation before producing output
+check_started=2026-07-17T02:12:28Z
+check_finished=2026-07-17T02:12:58Z
+check_command=npm.cmd run check
+check_exit=0
+slidev_visual_regression=10/10 layouts PASS at 0.000% pixel difference
+pptx_qa_started=2026-07-17T02:13:18Z
+pptx_qa_finished=2026-07-17T02:13:45Z
+pptx_build=npm.cmd run pptx:build; exit=0; 10 editable slides
+pptx_render=render_slides.py; exit=0; 10 pages rendered
+pptx_overflow=slides_test.py; exit=0; no overflow detected
+pptx_visual_inspection=all 10 pages inspected in an original-resolution montage; no clipping, overlap, or unintended wrapping found
+pptx_render_hash_match=10/10 PNG SHA-256 values match the prior reviewed PPTX render
+claim_boundary=the reviewed three-slot surface is enforced; adaptive cardinalities and cross-platform Office rendering are not claimed
