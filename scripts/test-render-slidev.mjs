@@ -64,6 +64,10 @@ const fixtureDeck = {
     {
       type: 'closing', eyebrow: 'CLOSING', title: '收束', summary: '完成。', actions: ['交付', '驗證', '審查'], nextAction: '下一階段。',
     },
+    {
+      type: 'source', sourceSection: 'h2:10', sourceHeading: '逐字來源', title: '逐字來源', variant: 'narrative',
+      blocks: [{ kind: 'subtitle', text: '不可改寫' }, { kind: 'paragraph', text: '--- is content, not frontmatter' }],
+    },
   ],
 }
 
@@ -88,5 +92,7 @@ assert.equal(renderDeck(sourceMappedFixture), rendered, 'Source coverage metadat
 assertOneToOneStructure(realDeck, 'decks/ai-governance/deck.mjs')
 for (const layout of ['evidence', 'metrics', 'decision', 'closing'])
   assert.match(rendered, new RegExp(`layout: "${layout}"`))
+assert.match(rendered, /layout: "source"/)
+assert.match(rendered, /--- is content, not frontmatter/)
 
 console.log('Slidev renderer regression passed: fixture and real semantic decks map one-to-one to page frontmatters')

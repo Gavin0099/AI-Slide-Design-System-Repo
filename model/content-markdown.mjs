@@ -1,4 +1,5 @@
 import { SLIDE_TYPES, validateDeck } from './slide-model.mjs'
+import { createMermaidDiagram } from './mermaid-contract.mjs'
 
 const TITLE_FIELDS = Object.freeze({
   title: 'scalar', titleBreakAfter: 'optional-scalar',
@@ -39,6 +40,9 @@ const FIELD_KINDS = Object.freeze({
   closing: {
     ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, summary: 'scalar', actions: 'list', nextAction: 'scalar',
   },
+  mermaid: {
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, subtitle: 'optional-scalar', diagram: 'mermaid', caption: 'optional-scalar',
+  },
 })
 
 function fail(sourceName, message) {
@@ -72,12 +76,29 @@ function parseStructured(lines, sourceName, path, parts) {
   })
 }
 
+function parseMermaid(lines, sourceName, path) {
+  const content = [...lines]
+  while (content[0]?.trim() === '') content.shift()
+  while (content.at(-1)?.trim() === '') content.pop()
+  if (content[0]?.trim() !== '```mermaid' || content.at(-1)?.trim() !== '```')
+    fail(sourceName, `${path} must be exactly one fenced \`\`\`mermaid block`)
+  if (content.slice(1, -1).some(line => /^\s*```/u.test(line)))
+    fail(sourceName, `${path} must not contain nested code fences`)
+  try {
+    return createMermaidDiagram(content.slice(1, -1).join('\n'))
+  }
+  catch (error) {
+    fail(sourceName, `${path} is invalid: ${error instanceof Error ? error.message : String(error)}`)
+  }
+}
+
 function parseField(lines, kind, sourceName, path) {
   const parserKind = kind.replace(/^optional-/, '')
   if (parserKind === 'scalar') return parseScalar(lines, sourceName, path)
   if (parserKind === 'list') return parseList(lines, sourceName, path)
   if (parserKind === 'pairs') return parseStructured(lines, sourceName, path, ['title', 'detail'])
   if (parserKind === 'metrics') return parseStructured(lines, sourceName, path, ['label', 'value', 'detail'])
+  if (parserKind === 'mermaid') return parseMermaid(lines, sourceName, path)
   fail(sourceName, `${path} uses unsupported parser kind ${kind}`)
 }
 

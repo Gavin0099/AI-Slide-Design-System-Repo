@@ -1,3 +1,5 @@
+import { validateMermaidDiagram } from './mermaid-contract.mjs'
+
 export const SLIDE_TYPES = Object.freeze([
   'cover',
   'key-message',
@@ -9,10 +11,14 @@ export const SLIDE_TYPES = Object.freeze([
   'metrics',
   'decision',
   'closing',
+  'mermaid',
+  'source',
 ])
 
 export const EVIDENCE_STATUSES = Object.freeze(['verified', 'detected', 'unproven'])
 export const COMPARISON_ACCENTS = Object.freeze(['governance'])
+export const SOURCE_VARIANTS = Object.freeze(['cover', 'statement', 'narrative', 'list', 'table', 'code', 'diagram', 'dense'])
+export const SOURCE_BLOCK_KINDS = Object.freeze(['subtitle', 'paragraph', 'bullet', 'numbered', 'quote', 'code', 'small', 'table-row', 'mermaid'])
 
 const LIMITS = Object.freeze({
   title: 22,
@@ -22,6 +28,9 @@ const LIMITS = Object.freeze({
   sourceHeading: 96,
   slotItems: 3,
   item: 32,
+  sourceBlocks: 48,
+  sourceBlockText: 1200,
+  sourceTableCells: 8,
 })
 
 function text(value, path, maxLength) {
@@ -94,6 +103,38 @@ function metricList(value, path, errors) {
   })
 }
 
+function sourceBlockList(value, path, errors) {
+  if (!Array.isArray(value) || value.length === 0) {
+    errors.push(`${path} must contain at least one source block`)
+    return
+  }
+  if (value.length > LIMITS.sourceBlocks)
+    errors.push(`${path} exceeds ${LIMITS.sourceBlocks} source blocks`)
+  value.forEach((block, index) => {
+    const blockPath = `${path}[${index}]`
+    const kindIsValid = capture(errors, () => {
+      if (!SOURCE_BLOCK_KINDS.includes(block?.kind))
+        throw new Error(`${blockPath}.kind must be one of ${SOURCE_BLOCK_KINDS.join(', ')}`)
+    })
+    if (!kindIsValid) return
+    if (block.kind === 'table-row') {
+      if (!Array.isArray(block.cells) || block.cells.length === 0 || block.cells.length > LIMITS.sourceTableCells) {
+        errors.push(`${blockPath}.cells must contain 1-${LIMITS.sourceTableCells} cells`)
+        return
+      }
+      block.cells.forEach((cell, cellIndex) =>
+        capture(errors, () => text(cell, `${blockPath}.cells[${cellIndex}]`, LIMITS.sourceBlockText)),
+      )
+      return
+    }
+    if (block.kind === 'mermaid') {
+      validateMermaidDiagram(block.diagram, `${blockPath}.diagram`, errors)
+      return
+    }
+    capture(errors, () => text(block?.text, `${blockPath}.text`, LIMITS.sourceBlockText))
+  })
+}
+
 export function validateDeck(deck) {
   const errors = []
 
@@ -114,7 +155,12 @@ export function validateDeck(deck) {
       if (!SLIDE_TYPES.includes(slide?.type))
         throw new Error(`${path}.type must be one of ${SLIDE_TYPES.join(', ')}`)
     })
-    const titleIsValid = capture(errors, () => text(slide?.title, `${path}.title`, LIMITS.title))
+    const titleLimit = slide?.type === 'source'
+      ? LIMITS.sourceHeading
+      : slide?.type === 'mermaid'
+        ? 56
+        : LIMITS.title
+    const titleIsValid = capture(errors, () => text(slide?.title, `${path}.title`, titleLimit))
     titleBreakIntent(slide, path, errors, titleIsValid)
 
     if (!typeIsValid) return
@@ -185,6 +231,23 @@ export function validateDeck(deck) {
       capture(errors, () => text(slide.summary, `${path}.summary`, 72))
       list(slide.actions, `${path}.actions`, errors)
       capture(errors, () => text(slide.nextAction, `${path}.nextAction`, 72))
+    }
+
+    if (slide.type === 'mermaid') {
+      capture(errors, () => text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item))
+      if (slide.subtitle !== undefined)
+        capture(errors, () => text(slide.subtitle, `${path}.subtitle`, 120))
+      validateMermaidDiagram(slide.diagram, `${path}.diagram`, errors)
+      if (slide.caption !== undefined)
+        capture(errors, () => text(slide.caption, `${path}.caption`, 96))
+    }
+
+    if (slide.type === 'source') {
+      capture(errors, () => text(slide.sourceSection, `${path}.sourceSection`, LIMITS.sourceSection))
+      capture(errors, () => text(slide.sourceHeading, `${path}.sourceHeading`, LIMITS.sourceHeading))
+      if (!SOURCE_VARIANTS.includes(slide.variant))
+        errors.push(`${path}.variant must be one of ${SOURCE_VARIANTS.join(', ')}`)
+      sourceBlockList(slide.blocks, `${path}.blocks`, errors)
     }
   })
 

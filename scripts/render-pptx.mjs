@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import pptxgen from 'pptxgenjs'
 import deck from '../decks/ai-governance/deck.mjs'
 import { validateDeck } from '../model/slide-model.mjs'
+import { loadMermaidAsset } from '../model/mermaid-assets.mjs'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 export const defaultPptxOutput = path.join(repoRoot, 'dist', 'ai-governance', 'ai-governance-editable.pptx')
@@ -301,6 +302,328 @@ function renderClosing(pptx, model) {
   slide.addNotes('Semantic layout: closing')
 }
 
+function sourceBlockText(block) {
+  if (block.kind === 'table-row') return block.cells.join('    ')
+  if (block.kind === 'mermaid') return ''
+  if (block.kind === 'bullet') return `\u2022 ${block.text}`
+  return block.text
+}
+
+function svgContainBox(svg, x, y, w, h) {
+  const match = svg.match(/viewBox=["']\s*[-+\d.]+\s+[-+\d.]+\s+([\d.]+)\s+([\d.]+)\s*["']/iu)
+  if (!match) return { x, y, w, h }
+  const sourceAspect = Number(match[1]) / Number(match[2])
+  const boxAspect = w / h
+  if (!Number.isFinite(sourceAspect) || sourceAspect <= 0) return { x, y, w, h }
+  if (sourceAspect > boxAspect) {
+    const fittedHeight = w / sourceAspect
+    return { x, y: y + (h - fittedHeight) / 2, w, h: fittedHeight }
+  }
+  const fittedWidth = h * sourceAspect
+  return { x: x + (w - fittedWidth) / 2, y, w: fittedWidth, h }
+}
+
+function addMermaidImage(slide, diagram, x, y, w, h, assetRoot) {
+  const asset = loadMermaidAsset(diagram, { assetRoot })
+  addCard(slide, x, y, w, h, { fill: C.surface, line: C.line })
+  const box = svgContainBox(asset.svg, x + 0.18, y + 0.16, w - 0.36, h - 0.32)
+  slide.addImage({ path: asset.absolutePath, ...box })
+}
+
+function sourceBodyFontSize(model, blocks) {
+  const characters = blocks.reduce((total, block) => total + sourceBlockText(block).length, 0)
+  if (model.variant === 'dense' || characters > 650) return 11.5
+  if (characters > 480) return 12.5
+  if (characters > 340) return 14
+  if (characters > 220) return 15.5
+  return 18
+}
+
+function sourceBlockColor(kind, index = 0) {
+  if (kind === 'quote') return { fill: 'EAF8F8', line: 'B7E4E8', accent: C.cyan }
+  if (kind === 'subtitle') return { fill: 'ECEEFF', line: 'CDD1FA', accent: C.accent }
+  if (kind === 'small') return { fill: 'F1F3F7', line: 'E1E5EC', accent: C.muted }
+  const palette = [
+    { fill: 'FFFFFF', line: 'DCE2EC', accent: C.accent },
+    { fill: 'F7F8FF', line: 'DDE0F7', accent: C.cyan },
+    { fill: 'F9FBFC', line: 'DDE8EA', accent: C.accentStrong },
+  ]
+  return palette[index % palette.length]
+}
+
+function addSourceChrome(slide) {
+  slide.addShape(pptxgen.ShapeType.rect, {
+    x: 0.38, y: 0.5, w: 0.08, h: 6.48,
+    fill: { color: C.accent }, line: { color: C.accent, transparency: 100 },
+  })
+  slide.addShape(pptxgen.ShapeType.arc, {
+    x: 10.36, y: 5.78, w: 2.66, h: 1.34,
+    adjustPoint: 0.28,
+    rotate: 180,
+    fill: { color: 'E8EAFF', transparency: 100 },
+    line: { color: C.accent, transparency: 55, width: 1.4 },
+  })
+  slide.addShape(pptxgen.ShapeType.ellipse, {
+    x: 11.9, y: 6.14, w: 0.5, h: 0.5,
+    fill: { color: C.cyan, transparency: 18 },
+    line: { color: C.cyan, transparency: 100 },
+  })
+}
+
+function sourceBlockWeight(block, compact = false) {
+  const text = sourceBlockText(block)
+  const divisor = compact ? 84 : 62
+  return 1 + Math.max(0, Math.ceil(text.length / divisor) - 1) * 0.56
+}
+
+function sourceBlockHeights(blocks, available, gap, compact = false) {
+  const usable = Math.max(0.4, available - gap * Math.max(0, blocks.length - 1))
+  const weights = blocks.map(block => sourceBlockWeight(block, compact))
+  const total = weights.reduce((sum, weight) => sum + weight, 0) || 1
+  return weights.map(weight => usable * weight / total)
+}
+
+function addSourceBlock(slide, block, index, x, y, w, h, options = {}) {
+  const colors = sourceBlockColor(block.kind, index)
+  const compact = options.compact ?? false
+  const fontSize = options.fontSize ?? (compact ? 12.5 : 16)
+  addCard(slide, x, y, w, h, {
+    fill: options.fill ?? colors.fill,
+    line: options.line ?? colors.line,
+    lineWidth: 0.9,
+  })
+  slide.addShape(pptxgen.ShapeType.roundRect, {
+    x: x + 0.14, y: y + 0.16, w: compact ? 0.06 : 0.08, h: Math.max(0.18, h - 0.32),
+    rectRadius: 0.03,
+    fill: { color: colors.accent }, line: { color: colors.accent, transparency: 100 },
+  })
+  addText(slide, sourceBlockText(block), x + (compact ? 0.32 : 0.4), y + 0.1, w - (compact ? 0.5 : 0.62), h - 0.2, {
+    fontSize,
+    bold: block.kind === 'subtitle' || block.kind === 'quote',
+    italic: block.kind === 'quote',
+    color: block.kind === 'small' ? C.muted : C.ink,
+    breakLine: true,
+    valign: 'middle',
+    fit: 'shrink',
+  })
+}
+
+function renderSourceStack(slide, blocks, bodyY, options = {}) {
+  const gap = options.gap ?? 0.14
+  const bottom = options.bottom ?? 6.74
+  const heights = sourceBlockHeights(blocks, bottom - bodyY, gap, options.compact)
+  let y = bodyY
+  blocks.forEach((block, index) => {
+    addSourceBlock(slide, block, index, 0.9, y, 11.52, heights[index], options)
+    y += heights[index] + gap
+  })
+}
+
+function renderSourceColumns(slide, blocks, bodyY, options = {}) {
+  const split = Math.ceil(blocks.length / 2)
+  const groups = [blocks.slice(0, split), blocks.slice(split)]
+  const xs = [0.9, 6.72]
+  groups.forEach((group, columnIndex) => {
+    if (group.length === 0) return
+    addCard(slide, xs[columnIndex], bodyY, 5.7, 6.74 - bodyY, {
+      fill: columnIndex === 0 ? 'F8F9FF' : 'F6FBFB',
+      line: columnIndex === 0 ? 'DDE0F7' : 'D9EAEC',
+    })
+    const gap = options.gap ?? 0.1
+    const insetY = bodyY + 0.16
+    const heights = sourceBlockHeights(group, 6.42 - bodyY, gap, true)
+    let y = insetY
+    group.forEach((block, index) => {
+      addSourceBlock(slide, block, index + columnIndex * split, xs[columnIndex] + 0.14, y, 5.42, heights[index], {
+        compact: true,
+        fontSize: options.fontSize ?? 13.2,
+        fill: 'FFFFFF',
+      })
+      y += heights[index] + gap
+    })
+  })
+}
+
+function renderSource(pptx, model, { assetRoot = repoRoot } = {}) {
+  const slide = pptx.addSlide()
+  addDecor(slide)
+  if (model.variant === 'cover') {
+    slide.addShape(pptxgen.ShapeType.rect, {
+      x: 0, y: 0, w: 0.22, h: H,
+      fill: { color: C.accentStrong }, line: { color: C.accentStrong, transparency: 100 },
+    })
+    addText(slide, model.title, 0.88, 1.55, 7.4, 1.4, {
+      fontSize: 50,
+      bold: true,
+      breakLine: true,
+      valign: 'middle',
+    })
+    const body = model.blocks.map(sourceBlockText).join('\n')
+    addText(slide, body, 0.88, 3.28, 7.5, 2.5, {
+      fontSize: sourceBodyFontSize(model, model.blocks),
+      color: C.muted,
+      breakLine: true,
+      valign: 'top',
+      fit: 'shrink',
+      paraSpaceAfterPt: 10,
+    })
+    slide.addShape(pptxgen.ShapeType.roundRect, {
+      x: 8.84, y: 1.46, w: 3.64, h: 4.46, rotate: 7,
+      fill: { color: 'E7E9FF', transparency: 18 },
+      line: { color: C.accent, transparency: 54, width: 1.2 },
+    })
+    slide.addShape(pptxgen.ShapeType.roundRect, {
+      x: 9.34, y: 1.92, w: 2.9, h: 3.56, rotate: -5,
+      fill: { color: 'E8F7F8', transparency: 12 },
+      line: { color: C.cyan, transparency: 38, width: 1.2 },
+    })
+    slide.addShape(pptxgen.ShapeType.ellipse, {
+      x: 10.04, y: 2.62, w: 1.48, h: 1.48,
+      fill: { color: C.accent, transparency: 18 },
+      line: { color: C.accent, transparency: 100 },
+    })
+    slide.addShape(pptxgen.ShapeType.ellipse, {
+      x: 10.48, y: 3.06, w: 0.6, h: 0.6,
+      fill: { color: C.cyan, transparency: 0 },
+      line: { color: C.cyan, transparency: 100 },
+    })
+    slide.addNotes(`Semantic layout: source\nSource section: ${model.sourceSection}`)
+    return
+  }
+
+  addSourceChrome(slide)
+  addTitle(slide, model.title, 0.54, C.ink, model.title.length > 28 ? 29 : 34)
+  const subtitle = model.blocks[0]?.kind === 'subtitle' ? model.blocks[0] : undefined
+  const bodyBlocks = subtitle ? model.blocks.slice(1) : model.blocks
+  let bodyY = 1.56
+  if (subtitle) {
+    addText(slide, subtitle.text, 0.88, 1.48, 11.56, 0.58, {
+      fontSize: model.variant === 'dense' ? 17 : 20,
+      bold: true,
+      color: C.accentStrong,
+      fit: 'shrink',
+    })
+    bodyY = 2.18
+  }
+  const body = bodyBlocks.map(sourceBlockText).join('\n')
+  const codeSurface = model.variant === 'code'
+  if (model.variant === 'diagram') {
+    const diagramBlocks = bodyBlocks.filter(block => block.kind === 'mermaid')
+    const proseBlocks = bodyBlocks.filter(block => block.kind !== 'mermaid')
+    if (diagramBlocks.length !== 1) throw new Error('Source diagram layout requires exactly one Mermaid block')
+    if (proseBlocks.length > 0) {
+      const gap = 0.12
+      const heights = sourceBlockHeights(proseBlocks, 6.68 - bodyY, gap, true)
+      let y = bodyY
+      proseBlocks.forEach((block, index) => {
+        addSourceBlock(slide, block, index, 0.9, y, 3.6, heights[index], { compact: true, fontSize: 13.4 })
+        y += heights[index] + gap
+      })
+      addMermaidImage(slide, diagramBlocks[0].diagram, 4.68, bodyY, 7.74, 6.74 - bodyY, assetRoot)
+    }
+    else {
+      addMermaidImage(slide, diagramBlocks[0].diagram, 0.9, bodyY, 11.52, 6.74 - bodyY, assetRoot)
+    }
+    slide.addNotes(`Semantic layout: source\nSource section: ${model.sourceSection}`)
+    return
+  }
+  if (model.variant === 'table') {
+    const firstTable = bodyBlocks.findIndex(block => block.kind === 'table-row')
+    const lastTable = bodyBlocks.findLastIndex(block => block.kind === 'table-row')
+    const before = bodyBlocks.slice(0, firstTable)
+    const rows = bodyBlocks.slice(firstTable, lastTable + 1).map(block => block.cells)
+    const after = bodyBlocks.slice(lastTable + 1)
+    const beforeHeight = before.length > 0 ? 0.72 : 0
+    if (before.length > 0)
+      addText(slide, before.map(sourceBlockText).join('\n'), 1.02, bodyY, 11.28, beforeHeight, {
+        fontSize: 13.5, valign: 'top', fit: 'shrink', breakLine: true,
+      })
+    const tableY = bodyY + beforeHeight + (beforeHeight ? 0.12 : 0)
+    const tableHeight = Math.min(3.75, Math.max(1.2, rows.length * 0.72))
+    slide.addTable(rows.map((row, rowIndex) => row.map(cell => ({
+      text: cell,
+      options: rowIndex === 0 ? { bold: true, color: C.accentStrong, fill: 'EEF0FF' } : {},
+    }))), {
+      x: 1.02, y: tableY, w: 11.28, h: tableHeight,
+      border: { type: 'solid', color: C.line, pt: 1 },
+      fill: C.surface,
+      color: C.ink,
+      fontFace: FONT,
+      fontSize: rows[0]?.length > 4 ? 9.5 : 11.5,
+      margin: 0.06,
+      valign: 'middle',
+      breakLine: false,
+      autoFit: false,
+      rowH: tableHeight / rows.length,
+    })
+    const afterY = tableY + tableHeight + 0.12
+    if (after.length > 0)
+      addText(slide, after.map(sourceBlockText).join('\n'), 1.02, afterY, 11.28, Math.max(0.4, 6.52 - afterY), {
+        fontSize: 12.5,
+        valign: 'top',
+        fit: 'shrink',
+        breakLine: true,
+        paraSpaceAfterPt: 4,
+      })
+    slide.addNotes(`Semantic layout: source\nSource section: ${model.sourceSection}`)
+    return
+  }
+  if (model.variant === 'statement') {
+    renderSourceStack(slide, bodyBlocks, bodyY, {
+      fontSize: bodyBlocks.length <= 2 ? 20 : 17.5,
+      gap: 0.2,
+    })
+    slide.addNotes(`Semantic layout: source\nSource section: ${model.sourceSection}`)
+    return
+  }
+  if (model.variant === 'list') {
+    renderSourceStack(slide, bodyBlocks, bodyY, {
+      fontSize: bodyBlocks.length > 8 ? 13.2 : 15.2,
+      gap: bodyBlocks.length > 8 ? 0.08 : 0.12,
+      compact: bodyBlocks.length > 8,
+    })
+    slide.addNotes(`Semantic layout: source\nSource section: ${model.sourceSection}`)
+    return
+  }
+  if (model.variant === 'dense' || model.variant === 'narrative') {
+    renderSourceColumns(slide, bodyBlocks, bodyY, {
+      fontSize: model.variant === 'dense' ? 11.7 : 13.5,
+      gap: model.variant === 'dense' ? 0.06 : 0.1,
+    })
+    slide.addNotes(`Semantic layout: source\nSource section: ${model.sourceSection}`)
+    return
+  }
+  if (codeSurface)
+    addCard(slide, 0.88, bodyY - 0.08, 11.56, 6.68 - bodyY, { fill: '182237', line: '182237' })
+  else
+    slide.addShape(pptxgen.ShapeType.line, { x: 0.88, y: bodyY - 0.14, w: 11.56, h: 0, line: { color: C.line, width: 1 } })
+  addText(slide, body, 1.02, bodyY, 11.28, 6.52 - bodyY, {
+    fontSize: sourceBodyFontSize(model, bodyBlocks),
+    color: codeSurface ? 'EDF2FF' : C.ink,
+    breakLine: true,
+    valign: 'top',
+    fit: 'shrink',
+    paraSpaceAfterPt: model.variant === 'dense' ? 4 : 8,
+  })
+  slide.addNotes(`Semantic layout: source\nSource section: ${model.sourceSection}`)
+}
+
+function renderMermaid(pptx, model, { assetRoot = repoRoot } = {}) {
+  const slide = pptx.addSlide()
+  addDecor(slide)
+  addSourceChrome(slide)
+  addEyebrow(slide, model.eyebrow)
+  addTitle(slide, titleText(model), 0.9, C.ink, model.title.length > 28 ? 31 : 36)
+  if (model.subtitle)
+    addText(slide, model.subtitle, 0.92, 1.34, 11.42, 0.44, { fontSize: 15.5, color: C.muted, fit: 'shrink' })
+  const diagramY = model.subtitle ? 1.92 : 1.72
+  const captionHeight = model.caption ? 0.48 : 0
+  addMermaidImage(slide, model.diagram, 0.9, diagramY, 11.52, 4.98 - captionHeight, assetRoot)
+  if (model.caption)
+    addText(slide, model.caption, 1.02, 6.28, 11.28, 0.42, { fontSize: 13.5, color: C.muted, fit: 'shrink' })
+  slide.addNotes(`Semantic layout: mermaid\nMermaid kind: ${model.diagram.kind}\nSource SHA-256: ${model.diagram.sourceSha256}`)
+}
+
 const renderers = Object.freeze({
   cover: renderCover,
   'key-message': renderKeyMessage,
@@ -312,9 +635,11 @@ const renderers = Object.freeze({
   metrics: renderMetrics,
   decision: renderDecision,
   closing: renderClosing,
+  mermaid: renderMermaid,
+  source: renderSource,
 })
 
-export function createEditablePresentation(deckToRender) {
+export function createEditablePresentation(deckToRender, { assetRoot = repoRoot } = {}) {
   const errors = validateDeck(deckToRender)
   if (errors.length > 0) throw new Error(errors.join('\n'))
 
@@ -331,14 +656,14 @@ export function createEditablePresentation(deckToRender) {
   deckToRender.slides.forEach((slide, index) => {
     const renderer = renderers[slide.type]
     if (!renderer) throw new Error(`Unsupported PPTX slide type at index ${index}: ${slide.type}`)
-    renderer(pptx, slide)
+    renderer(pptx, slide, { assetRoot })
   })
 
   return pptx
 }
 
-export async function renderDeckToPptx(deckToRender, outputPath = defaultPptxOutput) {
-  const pptx = createEditablePresentation(deckToRender)
+export async function renderDeckToPptx(deckToRender, outputPath = defaultPptxOutput, options = {}) {
+  const pptx = createEditablePresentation(deckToRender, options)
   await mkdir(path.dirname(outputPath), { recursive: true })
   await pptx.writeFile({ fileName: outputPath, compression: true })
   return outputPath

@@ -1,5 +1,11 @@
 import assert from 'node:assert/strict'
-import { parseSectionedMarkdown, validateSectionCoverage } from '../model/sectioned-markdown.mjs'
+import {
+  parseSectionedMarkdown,
+  projectSectionedMarkdown,
+  sourceBlocksForSection,
+  validateSectionCoverage,
+  validateSourceTextCoverage,
+} from '../model/sectioned-markdown.mjs'
 
 const sourceMarkdown = `---
 marp: true
@@ -46,6 +52,43 @@ const coveredDeck = {
 }
 assert.deepEqual(validateSectionCoverage(parsed, coveredDeck), [])
 
+const projectedDeck = projectSectionedMarkdown(sourceMarkdown, { sourceName: 'fixture.md' })
+assert.equal(projectedDeck.slides.length, parsed.sections.length)
+assert.deepEqual(projectedDeck.slides[1].blocks, sourceBlocksForSection(parsed.sections[1]))
+assert.deepEqual(validateSourceTextCoverage(parsed, projectedDeck), [])
+
+const visualIntentMarkdown = `# Visual intent
+### Cover detail
+
+## Short statement
+One exact sentence.
+
+## List page
+- First exact item
+- Second exact item
+- Third exact item
+
+## Dense page
+${'Dense exact source text '.repeat(24)}
+`
+const visualIntentDeck = projectSectionedMarkdown(visualIntentMarkdown, { sourceName: 'visual-intent.md' })
+assert.deepEqual(
+  visualIntentDeck.slides.map(slide => slide.variant),
+  ['cover', 'statement', 'list', 'dense'],
+  'source variants must express visual intent without rewriting source text',
+)
+
+const rewrittenDeck = structuredClone(projectedDeck)
+rewrittenDeck.slides[1].blocks[0].text = 'rewritten text'
+assert.match(
+  validateSourceTextCoverage(parsed, rewrittenDeck).join('\n'),
+  /must exactly preserve all audience-visible source text/,
+)
+
+const renamedDeck = structuredClone(projectedDeck)
+renamedDeck.slides[1].title = 'rewritten title'
+assert.match(validateSourceTextCoverage(parsed, renamedDeck).join('\n'), /title must exactly match source heading/)
+
 const mergedDeck = structuredClone(coveredDeck)
 mergedDeck.slides.splice(2, 1)
 assert.match(validateSectionCoverage(parsed, mergedDeck).join('\n'), /requires 4 slides; received 3/)
@@ -74,4 +117,4 @@ assert.throws(
   /at least one ## slide heading is required/,
 )
 
-console.log('Sectioned Markdown tests passed: H1 cover plus every H2 maps one-to-one, with merge, split, reorder, and duplicate regressions')
+console.log('Sectioned Markdown tests passed: one-to-one pagination plus verbatim audience-visible text regressions')

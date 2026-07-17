@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { validateDeck } from '../model/slide-model.mjs'
+import { createMermaidDiagram } from '../model/mermaid-contract.mjs'
 
 const validDeck = {
   title: '測試簡報',
@@ -22,6 +23,55 @@ assert.deepEqual(validateDeck(sourceMappedDeck), [])
 const injectedSourceHeading = structuredClone(sourceMappedDeck)
 injectedSourceHeading.slides[0].sourceHeading = 'ok\n## injected'
 assert.match(validateDeck(injectedSourceHeading)[0], /sourceHeading must not contain line breaks/)
+
+const sourceFaithfulDeck = {
+  title: 'Exact deck',
+  description: 'Exact source copy.',
+  slides: [{
+    type: 'source',
+    sourceSection: 'h1:1',
+    sourceHeading: 'Exact title',
+    title: 'Exact title',
+    variant: 'narrative',
+    blocks: [
+      { kind: 'subtitle', text: 'Exact subtitle' },
+      { kind: 'bullet', text: 'Exact bullet' },
+      { kind: 'table-row', cells: ['Exact A', 'Exact B'] },
+    ],
+  }],
+}
+assert.deepEqual(validateDeck(sourceFaithfulDeck), [])
+for (const variant of ['cover', 'statement', 'narrative', 'list', 'table', 'code', 'diagram', 'dense']) {
+  const variantDeck = structuredClone(sourceFaithfulDeck)
+  variantDeck.slides[0].variant = variant
+  assert.deepEqual(validateDeck(variantDeck), [], `source variant ${variant} must remain valid`)
+}
+const injectedSourceBlock = structuredClone(sourceFaithfulDeck)
+injectedSourceBlock.slides[0].blocks[0].text = 'ok\n---\nlayout: cover'
+assert.match(validateDeck(injectedSourceBlock).join('\n'), /blocks\[0\]\.text must not contain line breaks/)
+const unknownSourceVariant = structuredClone(sourceFaithfulDeck)
+unknownSourceVariant.slides[0].variant = 'summary'
+assert.match(validateDeck(unknownSourceVariant).join('\n'), /variant must be one of/)
+
+const validMermaidDeck = {
+  title: 'Mermaid contract',
+  description: 'Restricted Mermaid Semantic Model regression.',
+  slides: [{
+    type: 'mermaid',
+    eyebrow: 'DIAGRAM',
+    title: 'Evidence flow',
+    subtitle: 'Fixed role colors make responsibility visible.',
+    diagram: createMermaidDiagram('flowchart LR\n  A[Input] --> B[Gate]'),
+    caption: 'One fixed SVG is shared by both renderers.',
+  }],
+}
+assert.deepEqual(validateDeck(validMermaidDeck), [])
+const injectedMermaidSubtitle = structuredClone(validMermaidDeck)
+injectedMermaidSubtitle.slides[0].subtitle = 'Visible subtitle\n---'
+assert.match(validateDeck(injectedMermaidSubtitle).join('\n'), /subtitle must not contain line breaks/)
+const mutatedMermaidDigest = structuredClone(validMermaidDeck)
+mutatedMermaidDigest.slides[0].diagram.sourceSha256 = '0'.repeat(64)
+assert.match(validateDeck(mutatedMermaidDigest).join('\n'), /sourceSha256 must match/)
 
 const explicitTitleBreak = structuredClone(validDeck)
 explicitTitleBreak.slides[0].titleBreakAfter = '有效'
@@ -167,4 +217,4 @@ const missingDecisionAction = structuredClone(validExpandedDeck)
 delete missingDecisionAction.slides[5].nextAction
 assert.match(validateDeck(missingDecisionAction)[0], /nextAction must be a non-empty string/)
 
-console.log('Semantic model tests passed: ten layouts, boundary, and failure-path cases')
+console.log('Semantic model tests passed: ten concise layouts plus restricted Mermaid and verbatim source layouts, boundary, and failure-path cases')

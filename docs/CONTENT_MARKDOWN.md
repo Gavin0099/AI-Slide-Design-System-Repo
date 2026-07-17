@@ -14,22 +14,45 @@ heading structure is a pagination instruction, not merely a topic hint:
   two separate slides;
 - `###` headings, paragraphs, lists, tables, code blocks, and speaker notes stay
   within their owning H1/H2 section;
-- the planner may select a governed layout and condense copy inside a section,
-  but it must not merge sections, split a section, reorder sections, or drop one.
+- when the supplied Markdown is already slide copy, the planner may select visual
+  treatment but must not summarize, rewrite, add, or delete audience-visible text;
+- it must not merge sections, split a section, reorder sections, or drop one.
 
 Each planned slide records `sourceSection` and `sourceHeading`. These optional
 Semantic Model fields do not change either renderer's visible output. The
-coverage gate validates count, order, uniqueness, and exact source-heading
-mapping:
+coverage gate validates count, order, uniqueness, exact source-heading mapping,
+and—when `--verbatim` is present—exact audience-visible blocks:
 
 ```powershell
-npm run source:coverage -- --source <source.md> --deck <generated-deck.mjs>
+npm run source:coverage -- --source <source.md> --deck <generated-deck.mjs> --verbatim
 ```
 
 This source format is intentionally distinct from canonical Content Markdown.
 Source Markdown owns pagination and prose; `content.md` owns the selected
 semantic layout and renderer fields. The generated deck must satisfy both the
 one-to-one source coverage gate and the normal Semantic Model validation.
+
+For source Markdown that already contains final slide copy, generate the editable
+PPTX directly:
+
+```powershell
+npm run source:pptx -- --source <source.md> --output <deck.pptx>
+```
+
+The `source` Semantic Model layout preserves the exact heading plus ordered
+subtitle, paragraph, bullet, numbered, quote, code, small-text, and table-cell
+strings. Markdown formatting markers and HTML comments are not audience-visible
+text. After writing the PPTX, the command inspects its OOXML and fails unless the
+ordered visible text equals the source exactly. This layout is for verbatim
+source decks; the original ten governed layouts remain the constrained authoring
+surface for structured `content.md`.
+
+The verbatim projector derives only visual intent from the preserved blocks:
+`statement` for short emphasis, `list` for three or more list items,
+`narrative` for ordinary prose, `dense` for high-density copy, plus dedicated
+`table`, `code`, and `cover` variants. Both renderers may change geometry,
+editable shapes, color, and typography for these variants. They must not add,
+remove, reorder, or rewrite audience-visible strings.
 
 ## Default command
 
@@ -129,6 +152,54 @@ Metrics use `label :: value :: detail`:
 - 人工審查 :: PASS :: 綁定核准 baseline
 ```
 
+## Restricted Mermaid diagrams
+
+Use the `mermaid` layout when the diagram itself is authored in Markdown:
+
+````md
+## mermaid
+### eyebrow
+ARCHITECTURE
+### title
+Governance boundary
+### subtitle
+Fixed semantic roles make responsibility visible without allowing arbitrary CSS.
+### diagram
+```mermaid
+flowchart LR
+  A[Request] --> B[Pre-task gate]
+  subgraph GOV[Governance boundary]
+    B --> C[AI Agent]
+    C --> D[Post-task evidence]
+  end
+  D --> E[Human decision]
+  class A input
+  class C agent
+  class E outcome
+  class GOV boundary
+```
+### caption
+Optional audience-facing caption.
+````
+
+The contract supports `flowchart TB|TD|BT|LR|RL`, balanced `subgraph ... end`
+inside a flowchart, and restricted `sequenceDiagram` participants, messages,
+notes, and control blocks. It rejects initialization directives, HTML labels,
+interactive `click` or `href`, arbitrary `classDef`/`style`/`linkStyle`, shape
+metadata, external URLs, frontmatter delimiters, and unsupported Mermaid diagram
+families. Flowcharts may use only the fixed `class <node[,node]> <role>` form,
+where `role` is one of `input`, `capability`, `agent`, `tool`, `repository`,
+`outcome`, `governance`, or `boundary`; these names select renderer-owned visual
+tokens and cannot carry CSS declarations.
+
+The parser normalizes the source, computes its SHA-256, and assigns a generated
+asset path under `dist/mermaid-assets/`. Mermaid 11.16.0 renders the SVG with a
+fixed configuration; the manifest binds source bytes, SVG bytes, diagram kind,
+and asset path. Slidev embeds a data URI from that verified SVG and PptxGenJS
+embeds the exact same SVG bytes. Generated SVG and manifest files are outputs,
+not round-trip sources. Phase 1 exposes each PPTX diagram as one vector picture;
+node-level native PowerPoint shapes are explicitly deferred to Phase 2.
+
 ## Required fields by layout
 
 | Layout | Required fields |
@@ -143,6 +214,7 @@ Metrics use `label :: value :: detail`:
 | `metrics` | `eyebrow`, `title`, `metrics` |
 | `decision` | `eyebrow`, `title`, `decision`, `reasons`, `owner`, `nextAction` |
 | `closing` | `eyebrow`, `title`, `summary`, `actions`, `nextAction` |
+| `mermaid` | `eyebrow`, `title`, `diagram`; optional `subtitle`, `caption` |
 
 The Semantic Slide Model remains the authority for title length, list density, evidence status, allowed visuals, and other semantic limits. A Markdown file that is structurally valid can still fail model validation.
 
@@ -156,5 +228,6 @@ Semantic validation reports all independent model errors together in determinist
 - Generate, do not edit: `decks/**/deck.mjs`.
 - Generate, do not edit: `decks/**/slides.md`.
 - Deliver, do not round-trip: `dist/**/*.pptx` and other `dist/**` artifacts.
+- Generate, do not edit: `dist/mermaid-assets/*.svg` and its `manifest.json`.
 
 Manual edits made in PowerPoint are intentionally not imported back. Preserve a change by expressing it in Content Markdown, the Semantic Model, the shared theme, or the renderer.

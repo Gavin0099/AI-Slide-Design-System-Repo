@@ -42,13 +42,19 @@
 - [x] Remove the dead PPTX shadow abstraction while preserving byte-level OOXML parts and rendered pixels
 - [x] Add a fail-closed Windows/macOS PowerPoint evidence harness and record the first environment blockers
 - [x] Enforce source-report pagination so the H1 cover and every H2 section map one-to-one, in order, to Semantic Model slides
+- [x] Add verbatim source-slide projection and post-render OOXML text fidelity enforcement
+- [x] Add a restricted Mermaid contract for flowchart, subgraph, and sequenceDiagram with deterministic manifest-bound SVG reuse across both renderers
+- [x] Make GitHub-hosted CI independent of the internal GitLab submodule and replace the unreachable full drift command with an explicit repo-local governance projection gate
 
 ## Backlog
 
 <!-- Required: prioritized items not yet started -->
 
 - P1: Collect two licensed PowerPoint PNG captures on Windows and two on macOS for the same PPTX digest, then run the shared-baseline decision gate
+- P1: After human review of a representative verbatim deck, add approved `source` layout baselines covering cover, statement, narrative, list, table, code, and dense variants
+- P1: After human review of the three-slide Mermaid contract demo, add approved `mermaid` layout baselines for flowchart, subgraph, and sequenceDiagram
 - P1: Add explicit Semantic Model versioning and migration policy before external consumers depend on breaking contracts
+- P2: Convert the restricted Mermaid graph into native PptxGenJS nodes and connectors when node-level PowerPoint editability is required
 - P2: Validate PDF export after renderer ownership and font substitution behavior are stable
 
 ## Decision Log
@@ -75,6 +81,11 @@
 - 2026-07-17: Keep the editable PPTX effect surface explicitly shadow-free. Remove undefined shadow options and no-op call-site flags; enforce absence of outer, inner, and preset shadow elements in OOXML regression.
 - 2026-07-17: Keep the shared Office pixel baseline disabled until licensed Windows and macOS PowerPoint each produce two deterministic receipts for the exact same PPTX digest with Noto Sans TC installed. The current Windows installation is blocked by an unlicensed-product sign-in gate and no macOS Office host is attached, so the decision is `not_enough_evidence`.
 - 2026-07-17: Treat the source report H1 as the cover and every H2 occurrence as exactly one slide, including repeated visible section numbers. Preserve order and bind each slide to `sourceSection` plus `sourceHeading`; the coverage gate rejects merged, split, dropped, duplicated, or reordered sections before rendering.
+- 2026-07-17: When incoming Markdown already contains final slide copy, treat every audience-visible string as immutable. The `source` layout preserves ordered semantic blocks, both renderers consume the same model, and PPTX delivery fails unless OOXML text matches the source exactly; AI authority is limited to layout and visual treatment.
+- 2026-07-17: Derive visual intent from immutable source blocks without deriving new copy. Use distinct cover, statement, narrative, list, table, code, and dense compositions in both renderers; keep all decoration non-textual and require OOXML fidelity, overflow inspection, and human visual approval before source baselines enter the manifest.
+- 2026-07-17: Treat Mermaid source as the diagram authority and Mermaid 11.16.0 as a pinned asset compiler. Allow only flowchart, flowchart subgraph, and sequenceDiagram; reject interactive, HTML, styling, URL, and initialization escape surfaces. Generate SVG plus manifest only under `dist/`, inline compatibility styles and arrowheads, and require both renderers to verify and reuse the exact SVG bytes. Native PPTX diagram shapes remain Phase 2.
+- 2026-07-17: Reopen the first Mermaid visual baseline after the HTML reference exposed insufficient hierarchy in the default theme. Keep arbitrary styling forbidden, but allow eight fixed semantic role names that compile into renderer-owned colors, borders, repository shape treatment, and governance boundaries. The prior three screenshots remain technical-contract evidence only until the richer candidates pass a new human visual review.
+- 2026-07-17: GitHub-hosted runners must not clone the governance submodule hosted on the internal GitLab network. Public CI verifies the committed gitlink against `framework.lock.json`, protected governance hashes, the baseline sentinel, and required contract fields; upstream freshness and full framework drift remain company-network checks and are not implied by this gate.
 
 ## Known Risks
 
@@ -97,3 +108,6 @@
 - Dead renderer options can imply unsupported visual behavior and mislead future changes. Mitigation: remove the shadow abstraction and express the intended no-shadow contract as an observable OOXML assertion.
 - Office render evidence can be mislabeled or collected from a substitute renderer. Mitigation: bind receipts to the actual host OS, exact PPTX and per-slide PNG hashes, require two stable runs per platform, retain operator-attestation limits, and route any shared candidate to human authority review.
 - One-to-one section coverage proves pagination and heading identity, but not that every source detail was summarized faithfully inside its slide. Mitigation: retain the source-section trace on every slide, require human content review, and add field-level content coverage before making automated completeness claims.
+- Verbatim copy can exceed the density budget of the ten concise layouts. Mitigation: route final-copy Markdown through the dedicated `source` layout, adapt typography and table/code treatments without changing text, run overflow plus original-resolution review, and require human visual approval before adding its baseline.
+- Mermaid SVG support varies across Office-compatible renderers. Mitigation: remove HTML labels, inline computed presentation styles, materialize arrowheads as plain SVG polygons, verify exact embedded SVG bytes, and render every candidate PPTX at full size before visual approval.
+- GitHub-hosted CI cannot resolve or authenticate the internal governance GitLab host. Mitigation: skip submodule checkout, validate the committed governance projection locally, and keep upstream freshness/full drift outside the public-runner claim boundary.

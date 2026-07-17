@@ -3,6 +3,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { parseContentMarkdown, renderDeckModule } from '../model/content-markdown.mjs'
+import { buildMermaidAssets } from './build-mermaid-assets.mjs'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const defaultInput = path.join(repoRoot, 'decks', 'ai-governance', 'content.md')
@@ -32,6 +33,7 @@ async function main() {
   const outputPath = option('--output', defaultOutput)
   const source = await readFile(inputPath, 'utf8')
   const deck = parseContentMarkdown(source, { sourceName: path.relative(repoRoot, inputPath) })
+  if (!checkOnly) await buildMermaidAssets(deck, { assetRoot: repoRoot })
   const rendered = renderDeckModule(deck, { modelImport: moduleImport(outputPath) })
 
   if (checkOnly) {

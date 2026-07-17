@@ -56,7 +56,7 @@ const expectedErrors = [
   'slides[2].metrics[0].label must be a non-empty string',
   'slides[2].metrics[1].value must be a non-empty string',
   'slides[2].metrics[2].detail must not contain line breaks',
-  'slides[3].type must be one of cover, key-message, comparison, problem-solution, process, architecture, evidence, metrics, decision, closing',
+  'slides[3].type must be one of cover, key-message, comparison, problem-solution, process, architecture, evidence, metrics, decision, closing, mermaid, source',
   'slides[3].title must be a non-empty string',
 ]
 

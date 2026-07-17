@@ -58,4 +58,47 @@ const withSourceMetadata = source.replace(
 assert.equal(parseContentMarkdown(withSourceMetadata).slides[0].sourceSection, 'h1:1')
 assert.equal(parseContentMarkdown(withSourceMetadata).slides[0].sourceHeading, 'AI 投影片設計系統')
 
+const mermaidContent = [
+  '# Mermaid demo',
+  '> Restricted diagram contract.',
+  '',
+  '## mermaid',
+  '### eyebrow',
+  'DIAGRAM',
+  '### title',
+  'Evidence flow',
+  '### subtitle',
+  'Fixed semantic roles.',
+  '### diagram',
+  '```mermaid',
+  'flowchart LR',
+  '  A[Input] --> B[Gate]',
+  '  subgraph GOV[Governance]',
+  '    B --> C[Evidence]',
+  '  end',
+  '  class A input',
+  '  class C tool',
+  '  class GOV boundary',
+  '```',
+  '### caption',
+  'The fixed SVG is shared by both renderers.',
+].join('\n')
+const parsedMermaid = parseContentMarkdown(mermaidContent, { sourceName: 'mermaid.md' })
+assert.equal(parsedMermaid.slides[0].type, 'mermaid')
+assert.equal(parsedMermaid.slides[0].subtitle, 'Fixed semantic roles.')
+assert.equal(parsedMermaid.slides[0].diagram.kind, 'flowchart')
+assert.match(parsedMermaid.slides[0].diagram.asset, /^dist\/mermaid-assets\/[a-f0-9]{64}\.svg$/u)
+assert.throws(
+  () => parseContentMarkdown(mermaidContent.replace('flowchart LR', 'stateDiagram-v2'), { sourceName: 'mermaid.md' }),
+  /must begin with flowchart/,
+)
+assert.throws(
+  () => parseContentMarkdown(mermaidContent.replace('  A[Input] --> B[Gate]', '  click A "https://example.com"'), { sourceName: 'mermaid.md' }),
+  /interactive or arbitrary styling directives|external or executable URLs/,
+)
+assert.throws(
+  () => parseContentMarkdown(mermaidContent.replace('  class A input', '  class A arbitrary'), { sourceName: 'mermaid.md' }),
+  /role must be one of/,
+)
+
 console.log('Content Markdown tests passed: deterministic projection plus layout, field, structure, and model failure paths')

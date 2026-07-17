@@ -339,10 +339,12 @@ Prompt yourself:
 - `decks/**/content.md` is the canonical human-authored content source.
 - `model/content-markdown.mjs` owns the Markdown input contract and projection into the Semantic Slide Model.
 - `model/slide-model.mjs` owns the canonical Semantic Slide Model allowlist, validation rules, and density limits.
+- `model/mermaid-contract.mjs` owns the restricted Mermaid grammar, source normalization, digest, and generated asset path. Renderers must consume the verified SVG asset rather than parse Mermaid independently.
 - `theme/**` owns reusable visual tokens, components, layouts, and the governed font asset.
 - Renderers consume the generated Semantic Model module; they must not reinterpret `content.md` independently.
 - For sectioned source reports, the H1 is the cover and every H2 occurrence is exactly one slide. Repeated visible numbers remain separate slides; do not merge, split, drop, duplicate, or reorder source sections.
 - Each projected source-report slide must retain `sourceSection` and `sourceHeading`, and the section-coverage gate must pass before either renderer is treated as faithful to the source pagination.
+- When source Markdown is declared to contain final PowerPoint copy, preserve every audience-visible heading, paragraph, list item, quote, code line, and table cell exactly. AI may choose layout and visual treatment only; do not summarize, rewrite, add, or delete text.
 
 ## Artifact Ownership
 
@@ -350,6 +352,7 @@ Prompt yourself:
 - `decks/**/deck.mjs`: generated Semantic Model module; never hand-edit.
 - `decks/**/slides.md`: generated Slidev intermediate; never hand-edit.
 - `dist/**`: generated delivery artifacts; never use them as source input.
+- `dist/mermaid-assets/**`: generated fixed SVG and manifest outputs; regenerate from Mermaid source and never hand-edit.
 - Exported PPTX files are outputs, not round-trip sources. Manual PowerPoint edits are not preserved unless represented in `content.md` or the shared model/theme/renderer layer first.
 
 ## Semantic Compatibility Rules
@@ -366,7 +369,9 @@ Deck metadata and semantic tokens are part of the model boundary: `deck.descript
 
 - Content parser changes must prove deterministic `content.md -> deck.mjs` projection and include failure-path fixtures for malformed headings, missing fields, structured items, and model limits.
 - Source-report ingestion changes must prove H1/H2 one-to-one coverage, including repeated headings and fenced-code immunity, plus merge, split, drop, duplicate, and reorder failure regressions.
+- Verbatim source rendering must pass Semantic Model text coverage and post-render PPTX OOXML fidelity checks; include a rewritten-text mutation that fails closed in both layers.
 - Renderer changes must prove one-to-one slide projection, complete semantic text, expected editable-object ownership, and absence of flattened slide pictures unless a reviewed layout explicitly requires raster content.
+- Mermaid changes must prove allowlisted flowchart/subgraph/sequence syntax, rejection of init/HTML/interactive/arbitrary-style/URL escape surfaces, exact allowlisting of any renderer-owned semantic role names, deterministic SVG bytes, manifest/source/SVG digest binding, dual-renderer reuse of the same SVG bytes, and fail-closed behavior after SVG mutation.
 - Screenshot server path handling must use `path.relative` containment and retain traversal plus sibling-prefix mutation regression; string-prefix checks are insufficient.
 - Layout or visible example-content changes require approved 1280x720 baselines, zero-diff recapture in the reviewed environment, and original-resolution inspection for overflow, clipping, wrapping, hierarchy, and unintended overlap.
 - PPTX delivery additionally requires full-size rendering of every page and `slides_test.py` overflow inspection. Report font substitution and cross-platform behavior as claim boundaries unless separately verified.
@@ -388,11 +393,13 @@ Prompt yourself:
 -->
 
 - `model/**`, `scripts/render-content.mjs`, and `decks/**/content.md`: run `npm run content:test`, `npm run lint`, and `npm run render:check`.
+- `model/mermaid-*`, `scripts/build-mermaid-assets.mjs`, or Mermaid renderer paths: run `npm run mermaid:test`, `npm run mermaid:demo`, render all demo slides, and run `slides_test.py` before delivery.
 - PPTX renderer changes: run `npm run pptx:test`, render every slide, and run `slides_test.py` before delivery.
 - Office evidence collector or comparator changes: run `npm run office:evidence:test`; shared-baseline promotion additionally requires two receipts per platform plus external human authority review.
 - `theme/layouts/**`, `theme/components/**`, and `theme/styles/**`: run `npm run build`.
 - `theme/fonts/**`: run `npm run font:check`; if the source repository, commit, or source path changes, also run `npm run font:provenance:verify` and record the network evidence.
 - Generated `decks/**/deck.mjs` or `decks/**/slides.md`: run `npm run check` so content freshness, semantic constraints, and generated output are verified.
+- `.github/workflows/**` or GitHub CI scripts: run `npm run ci:workflow:test`, `npm run governance:projection:check`, and `npm run check:ci`.
 
 ## L1 → L2 Escalation Triggers
 <!-- governance:key=escalation_triggers -->
@@ -429,6 +436,8 @@ Prompt yourself:
 
 - Do not hand-edit generated `decks/*/deck.mjs` or `decks/*/slides.md`; edit the corresponding `content.md` and rerun `npm run content:build` / `npm run render`.
 - Do not add arbitrary per-deck CSS when an existing token, component, or layout can express the intent.
+- Do not bypass the Mermaid contract with raw renderer HTML, remote Mermaid rendering, unpinned Mermaid versions, hand-edited generated SVG, or renderer-specific diagram parsing.
 - Do not label a claim `Verified` without an evidence reference or an explicit source note.
 - Do not claim `npm run font:check` proves upstream provenance; only the network-dependent `npm run font:provenance:verify` compares local bytes with the pinned official commit.
 - Do not commit generated output outside `dist/`, credentials, private source documents, or unlicensed third-party assets.
+- Do not enable recursive governance-submodule checkout on GitHub-hosted runners while the framework URL is internal-only. The public runner may verify the committed projection, but must not label that result upstream freshness or full framework drift.

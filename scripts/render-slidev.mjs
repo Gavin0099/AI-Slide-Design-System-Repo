@@ -4,7 +4,9 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import deck from '../decks/ai-governance/deck.mjs'
 import { validateDeck } from '../model/slide-model.mjs'
+import { mermaidAssetDataUri } from '../model/mermaid-assets.mjs'
 
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const outputPath = path.resolve('decks/ai-governance/slides.md')
 
 function yamlValue(value) {
@@ -32,11 +34,11 @@ function titleHeading(slide) {
   return `# ${slide.titleBreakAfter}<br>${slide.title.slice(slide.titleBreakAfter.length)}`
 }
 
-function renderSlide(deckToRender, slide, index) {
+function renderSlide(deckToRender, slide, index, themePath, assetRoot) {
   if (slide.type === 'cover') {
     return [
       frontmatter({
-        theme: '../../theme',
+        theme: themePath,
         title: deckToRender.title,
         info: deckToRender.description,
         layout: 'cover',
@@ -165,16 +167,47 @@ function renderSlide(deckToRender, slide, index) {
     ].join('\n\n')
   }
 
+  if (slide.type === 'mermaid') {
+    return [
+      frontmatter({
+        ...(index === 0 ? { theme: themePath, title: deckToRender.title, info: deckToRender.description } : {}),
+        layout: 'mermaid',
+        eyebrow: slide.eyebrow,
+        ...(slide.subtitle ? { subtitle: slide.subtitle } : {}),
+        diagramKind: slide.diagram.kind,
+        diagramSrc: mermaidAssetDataUri(slide.diagram, { assetRoot }),
+        ...(slide.caption ? { caption: slide.caption } : {}),
+      }),
+      titleHeading(slide),
+    ].join('\n\n')
+  }
+
+
+  if (slide.type === 'source') {
+    const sourceFrontmatter = {
+      ...(index === 0 ? { theme: themePath, title: deckToRender.title, info: deckToRender.description } : {}),
+      layout: 'source',
+      variant: slide.variant,
+      blocks: slide.blocks.map(block => block.kind === 'mermaid'
+        ? { ...block, diagramSrc: mermaidAssetDataUri(block.diagram, { assetRoot }) }
+        : block),
+    }
+    return [
+      frontmatter(sourceFrontmatter),
+      titleHeading(slide),
+    ].join('\n\n')
+  }
+
   throw new Error(`Unsupported slide type at index ${index}: ${slide.type}`)
 }
 
-export function renderDeck(deckToRender) {
+export function renderDeck(deckToRender, { themePath = '../../theme', assetRoot = repoRoot } = {}) {
   const errors = validateDeck(deckToRender)
   if (errors.length > 0) throw new Error(errors.join('\n'))
 
   // Each slide already owns a complete frontmatter block. Adding another
   // horizontal rule between blocks creates an empty Slidev page.
-  return `${deckToRender.slides.map((slide, index) => renderSlide(deckToRender, slide, index)).join('\n\n')}\n`
+  return `${deckToRender.slides.map((slide, index) => renderSlide(deckToRender, slide, index, themePath, assetRoot)).join('\n\n')}\n`
 }
 
 async function main() {
