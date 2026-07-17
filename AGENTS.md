@@ -367,6 +367,7 @@ Deck metadata and semantic tokens are part of the model boundary: `deck.descript
 - Screenshot server path handling must use `path.relative` containment and retain traversal plus sibling-prefix mutation regression; string-prefix checks are insufficient.
 - Layout or visible example-content changes require approved 1280x720 baselines, zero-diff recapture in the reviewed environment, and original-resolution inspection for overflow, clipping, wrapping, hierarchy, and unintended overlap.
 - PPTX delivery additionally requires full-size rendering of every page and `slides_test.py` overflow inspection. Report font substitution and cross-platform behavior as claim boundaries unless separately verified.
+- The editable PPTX renderer intentionally emits no shadow effect elements; keep this as an OOXML assertion instead of an undefined renderer option or per-call `shadow: false` flags.
 
 ## Must-Test Paths
 <!-- governance:key=must_test_paths -->

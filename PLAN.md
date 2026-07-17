@@ -39,6 +39,7 @@
 - [x] Aggregate all independent Semantic Model validation errors in one deterministic result
 - [x] Harden screenshot server build-root containment against traversal and sibling-prefix paths
 - [x] Validate deck description metadata and comparison accent tokens directly in the Semantic Model
+- [x] Remove the dead PPTX shadow abstraction while preserving byte-level OOXML parts and rendered pixels
 
 ## Backlog
 
@@ -69,6 +70,7 @@
 - 2026-07-17: Make Semantic Model validation collect independent errors in deterministic deck/slide/field/item order. Unknown slide types validate only common fields so aggregation does not invent dependent schema errors.
 - 2026-07-17: Resolve screenshot server files only when `path.relative(buildRoot, candidate)` is a non-absolute descendant path. Parent traversal and sibling paths sharing the `buildRoot` string prefix fall back to the built `index.html`.
 - 2026-07-17: Require direct-model `deck.description` to be non-empty, single-line, and at most 120 characters; restrict `comparison.accent` to the `governance` token. This tightens validation for direct Semantic Model consumers while leaving committed Content Markdown output unchanged.
+- 2026-07-17: Keep the editable PPTX effect surface explicitly shadow-free. Remove undefined shadow options and no-op call-site flags; enforce absence of outer, inner, and preset shadow elements in OOXML regression.
 
 ## Known Risks
 
@@ -88,3 +90,4 @@
 - Aggregated validation can overwhelm authors if it emits cascading errors. Mitigation: stop at invalid collection shape, skip layout-specific checks for unknown types, and suppress title-break prefix checks when the title itself is invalid.
 - Lexical path containment does not resolve symlink targets. Mitigation: generated Slidev output is repo-owned and ephemeral; do not place symlinks in `dist/`, and add realpath containment if the server ever accepts externally controlled build trees.
 - Metadata rendered into Slidev frontmatter or PPTX properties can bypass parser-only checks when callers construct decks directly. Mitigation: validate description and accent in `validateDeck`, with missing, newline-injection, and allowlist regression through both renderers.
+- Dead renderer options can imply unsupported visual behavior and mislead future changes. Mitigation: remove the shadow abstraction and express the intended no-shadow contract as an observable OOXML assertion.

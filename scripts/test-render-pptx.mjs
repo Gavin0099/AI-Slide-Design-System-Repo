@@ -73,14 +73,17 @@ assert.equal(mediaEntries.length, 0, 'Editable renderer must not flatten slides 
 assert.equal(embeddedFontEntries.length, 0, 'Renderer contract must expose that the PPTX references, but does not embed, Noto Sans TC')
 
 const report = []
+let shadowEffectCount = 0
 for (const [index, entry] of slideEntries.entries()) {
   const xml = await archive.file(entry).async('string')
   const text = [...xml.matchAll(/<a:t>([\s\S]*?)<\/a:t>/g)].map(match => decodeXml(match[1])).join('\n')
   const shapeCount = (xml.match(/<p:sp>/g) ?? []).length
   const pictureCount = (xml.match(/<p:pic>/g) ?? []).length
+  const slideShadowEffectCount = (xml.match(/<a:(?:outerShdw|innerShdw|prstShdw)\b/g) ?? []).length
 
   assert.ok(shapeCount >= 5, `Slide ${index + 1} must contain editable native shapes/text boxes`)
   assert.equal(pictureCount, 0, `Slide ${index + 1} must not contain flattened picture objects`)
+  assert.equal(slideShadowEffectCount, 0, `Slide ${index + 1} must keep the conservative no-shadow OOXML surface`)
   for (const expected of visibleStrings(deck.slides[index]))
     assert.ok(semanticText(text).includes(semanticText(expected)), `Slide ${index + 1} is missing editable text: ${expected}`)
 
@@ -89,8 +92,12 @@ for (const [index, entry] of slideEntries.entries()) {
     layout: deck.slides[index].type,
     editableShapeCount: shapeCount,
     pictureCount,
+    shadowEffectCount: slideShadowEffectCount,
   })
+  shadowEffectCount += slideShadowEffectCount
 }
+
+assert.equal(shadowEffectCount, 0, 'Editable PPTX must not emit outer, inner, or preset shadow effects')
 
 const theme = await archive.file('ppt/theme/theme1.xml').async('string')
 assert.match(theme, /Noto Sans TC/, 'PPTX theme must declare the governed Chinese font family')
@@ -121,7 +128,8 @@ await writeFile(path.join(runtimeRoot, 'editability-report.json'), `${JSON.strin
   themeFont: 'Noto Sans TC',
   fontEmbedded: false,
   explicitTitleBreakIntent: true,
+  shadowEffects: shadowEffectCount,
   slides: report,
 }, null, 2)}\n`)
 
-console.log('Editable PPTX renderer tests passed: 10 semantic slides, native text/shapes, no flattened slide images')
+console.log('Editable PPTX renderer tests passed: 10 semantic slides, native text/shapes, no flattened images or shadow effects')

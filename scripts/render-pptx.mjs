@@ -30,10 +30,6 @@ const C = Object.freeze({
   danger: 'C94F5E',
 })
 
-// Keep the OOXML effect surface conservative. Some third-party PPTX readers
-// overflow while parsing PptxGenJS outer-shadow values after slide scaling.
-const shadow = undefined
-
 function addText(slide, text, x, y, w, h, options = {}) {
   slide.addText(text, {
     x, y, w, h,
@@ -81,7 +77,6 @@ function addCard(slide, x, y, w, h, options = {}) {
     rectRadius: 0.08,
     fill: { color: options.fill ?? C.surface, transparency: options.transparency ?? 0 },
     line: { color: options.line ?? C.line, width: options.lineWidth ?? 1 },
-    shadow: options.shadow === false ? undefined : shadow,
   })
 }
 
@@ -124,7 +119,6 @@ function renderCover(pptx, model) {
     x: 9.02, y: 2.02, w: 3.42, h: 3.42,
     fill: { color: C.surface },
     line: { color: 'D4D8F6', width: 1.2 },
-    shadow,
   })
   slide.addShape(pptxgen.ShapeType.ellipse, {
     x: 9.52, y: 2.52, w: 2.42, h: 2.42,
@@ -149,7 +143,7 @@ function renderKeyMessage(pptx, model) {
   addText(slide, '驗證缺口', 10.02, 3.3, 0.78, 0.36, { fontSize: 10, bold: true, color: C.danger, align: 'center' })
   slide.addShape(pptxgen.ShapeType.roundRect, { x: 8.7, y: 3.76, w: 3.4, h: 0.68, fill: { color: C.success }, line: { color: C.success } })
   addText(slide, '驗證', 8.7, 3.76, 3.4, 0.68, { fontSize: 18, bold: true, color: 'FFFFFF', align: 'center' })
-  addCard(slide, 0.88, 5.95, 11.56, 0.76, { shadow: false })
+  addCard(slide, 0.88, 5.95, 11.56, 0.76)
   slide.addShape(pptxgen.ShapeType.roundRect, { x: 1.12, y: 6.16, w: 0.62, h: 0.34, fill: { color: C.accent }, line: { color: C.accent } })
   addText(slide, '證據', 1.12, 6.16, 0.62, 0.34, { fontSize: 10, bold: true, color: 'FFFFFF', align: 'center' })
   addText(slide, model.evidence, 1.94, 6.08, 9.92, 0.46, { fontSize: 15, color: C.muted })
@@ -233,7 +227,7 @@ function renderEvidence(pptx, model) {
   addTitle(slide, titleText(model), 0.94, C.ink, 36)
   const statusColors = { verified: C.success, detected: C.warning, unproven: C.danger }
   const statusLabels = { verified: 'VERIFIED / 已驗證', detected: 'DETECTED / 已偵測', unproven: 'UNPROVEN / 未證明' }
-  addCard(slide, 0.88, 1.94, 11.56, 0.92, { line: statusColors[model.status], fill: 'F3FBF8', shadow: false })
+  addCard(slide, 0.88, 1.94, 11.56, 0.92, { line: statusColors[model.status], fill: 'F3FBF8' })
   slide.addShape(pptxgen.ShapeType.roundRect, { x: 1.18, y: 2.18, w: 1.75, h: 0.44, fill: { color: statusColors[model.status] }, line: { color: statusColors[model.status] } })
   addText(slide, statusLabels[model.status], 1.18, 2.18, 1.75, 0.44, { fontSize: 10, bold: true, color: 'FFFFFF', align: 'center' })
   addText(slide, model.claim, 3.2, 2.12, 8.7, 0.56, { fontSize: 18, bold: true })
@@ -269,17 +263,17 @@ function renderDecision(pptx, model) {
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
   addTitle(slide, titleText(model), 0.94, C.ink, 36)
-  addCard(slide, 0.88, 1.88, 11.56, 0.84, { line: C.accent, fill: 'F0F1FF', shadow: false })
+  addCard(slide, 0.88, 1.88, 11.56, 0.84, { line: C.accent, fill: 'F0F1FF' })
   slide.addShape(pptxgen.ShapeType.rect, { x: 0.88, y: 1.88, w: 0.08, h: 0.84, fill: { color: C.accent }, line: { color: C.accent } })
   addText(slide, 'DECISION', 1.25, 2.12, 1.3, 0.3, { fontSize: 10, bold: true, color: C.accent, charSpacing: 1.6 })
   addText(slide, model.decision, 2.85, 2.04, 9.0, 0.46, { fontSize: 17, bold: true })
   model.reasons.forEach((reason, index) => {
     const y = 3.06 + index * 1.13
-    addCard(slide, 0.88, y, 6.24, 0.93, { shadow: false })
+    addCard(slide, 0.88, y, 6.24, 0.93)
     addText(slide, `0${index + 1}`, 1.1, y + 0.31, 0.5, 0.28, { fontSize: 10, bold: true, color: C.cyan })
     addText(slide, reason, 1.62, y + 0.22, 4.95, 0.45, { fontSize: 16, bold: true })
   })
-  addCard(slide, 7.36, 3.06, 5.08, 3.19, { shadow: false })
+  addCard(slide, 7.36, 3.06, 5.08, 3.19)
   addText(slide, 'OWNER', 7.72, 3.62, 1.2, 0.28, { fontSize: 10, bold: true, color: C.accent, charSpacing: 1.6 })
   addText(slide, model.owner, 7.72, 4.02, 4.35, 0.46, { fontSize: 15, bold: true })
   slide.addShape(pptxgen.ShapeType.line, { x: 7.36, y: 4.78, w: 5.08, h: 0, line: { color: C.line, width: 1 } })

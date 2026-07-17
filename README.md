@@ -66,7 +66,7 @@ npm run pptx:test
 
 ## Editable PPTX renderer
 
-PptxGenJS renderer 支援與 Slidev 相同的十種 layout。文字、色塊、線條與圖形都是 PowerPoint 原生物件，不是整頁截圖；投影片備註保留 semantic layout 與來源路徑。
+PptxGenJS renderer 支援與 Slidev 相同的十種 layout。文字、色塊、線條與圖形都是 PowerPoint 原生物件，不是整頁截圖；投影片備註保留 semantic layout 與來源路徑。為維持第三方 reader 相容性，OOXML effect surface 明確不輸出 outer、inner 或 preset shadow effects。
 
 PPTX theme 指定 `Noto Sans TC`，但目前檔案不內嵌 repo 內的 TTF。在沒有安裝該字型的電腦上，PowerPoint 可能以系統字型取代，造成換行或字寬差異。
 
