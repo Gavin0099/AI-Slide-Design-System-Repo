@@ -1,0 +1,19 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-17T02:56:27Z",
+  "finished_at": "2026-07-17T02:56:59Z",
+  "runner": "codex-windows-chrome",
+  "linked_commit": "ea56a0cbf7da673eece85ea2c0630331b377057e",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/semantic-metadata-validation-20260717.txt"
+  ],
+  "cannot_claim": [
+    "factual or semantic truth of deck descriptions",
+    "support for comparison accent tokens other than governance",
+    "new human visual approval for this non-visual validation slice",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}

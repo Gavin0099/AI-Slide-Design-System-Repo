@@ -1,0 +1,21 @@
+Semantic metadata validation evidence
+linked_commit=ea56a0cbf7da673eece85ea2c0630331b377057e
+scope=direct Semantic Model validation for deck.description and comparison.accent
+description_contract=required non-empty single-line text with a 120-character maximum
+accent_contract=required non-empty single-line semantic token allowlisted to governance
+mutation_count=6
+description_mutations=missing, CR/LF frontmatter injection, and 121-character overflow
+accent_mutations=missing, CR/LF frontmatter injection, and unsupported danger token
+validator_result=each mutation returns one exact field-path error
+slidev_renderer_result=all six mutations fail before rendering
+pptx_renderer_result=all six mutations fail before presentation creation
+committed_content_migration=not required; canonical content already satisfies both contracts
+compatibility=validation tightening for direct Semantic Model consumers
+check_started=2026-07-17T02:56:27Z
+check_finished=2026-07-17T02:56:59Z
+check_command=npm.cmd run check
+check_exit=0
+metadata_mutation_regression=PASS
+existing_model_validation_cardinality_content_renderer_pptx_gates=PASS
+slidev_visual_regression=10/10 layouts PASS at 0.000% pixel difference
+claim_boundary=only governance is an approved comparison accent; new tokens require model, renderer, and visual review
