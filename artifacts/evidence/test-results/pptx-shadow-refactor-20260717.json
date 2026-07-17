@@ -1,0 +1,69 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "scope": "remove dead PPTX shadow abstraction and no-op shadow:false call sites",
+  "baseline_commit": "a85c8405eb856e339c6f6b79cb8d6ecab7bac593",
+  "linked_commit": "29fc1db3859d3a67dff94cc60db6b1a64eacee39",
+  "runner": "codex-windows-artifact-tool",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-17T03:20:46Z",
+  "finished_at": "2026-07-17T03:21:17Z",
+  "checked_at": "2026-07-17T03:18:55Z",
+  "commands": [
+    "npm.cmd run pptx:build",
+    "python render_slides.py <pptx> --output_dir <rendered-final>",
+    "python slides_test.py <pptx>",
+    "npm.cmd run check"
+  ],
+  "check": {
+    "started_at": "2026-07-17T03:20:46Z",
+    "finished_at": "2026-07-17T03:21:17Z",
+    "exit_code": 0
+  },
+  "ooxml": {
+    "package_parts": 56,
+    "byte_identical_package_parts": 55,
+    "changed_parts": [
+      "docProps/core.xml"
+    ],
+    "change_explanation": "Only generated dcterms:created and dcterms:modified timestamps changed between builds.",
+    "ppt_content_parts": 52,
+    "byte_identical_ppt_content_parts": 52,
+    "baseline_ppt_content_manifest_sha256": "0ff2aee4967eab77711daa90b4968f9174981dd8b002a8c063aba66f322fb608",
+    "after_ppt_content_manifest_sha256": "0ff2aee4967eab77711daa90b4968f9174981dd8b002a8c063aba66f322fb608",
+    "canonicalization": "Replace only dcterms:created and dcterms:modified values in docProps/core.xml with TIMESTAMP before hashing.",
+    "canonical_package_parts": 56,
+    "byte_identical_canonical_package_parts": 56,
+    "baseline_canonical_package_manifest_sha256": "6e422493880f68a5f1fe95d85a5e8830df56a2634671a4e184450d3672f6a79f",
+    "after_canonical_package_manifest_sha256": "6e422493880f68a5f1fe95d85a5e8830df56a2634671a4e184450d3672f6a79f",
+    "canonical_core_sha256": "c0932f793287d3d002b39b52fb84574e091f72591888862974da64e32b718794",
+    "baseline_shadow_effect_elements": 0,
+    "after_shadow_effect_elements": 0
+  },
+  "raw_container": {
+    "baseline_pptx_sha256": "09fdc9b21fda8272bf1a36db87c155e77385c55b14095362a7621586f1c24e9b",
+    "after_pptx_sha256": "e69e872ff53cd7458d4a208806a7246a622e966e868c4d9be94ff4c5f2fd8b70",
+    "identical": false,
+    "reason": "PPTX is a ZIP container with volatile package metadata; decompressed content is compared separately above."
+  },
+  "render": {
+    "pages": 10,
+    "identical_pages": 10,
+    "dimensions": "1600x900",
+    "baseline_manifest_sha256": "68aa9b9d17f09dfce3e2d6d7bd3dd3d391c8629ee333c3d0db064613956291bc",
+    "after_manifest_sha256": "68aa9b9d17f09dfce3e2d6d7bd3dd3d391c8629ee333c3d0db064613956291bc",
+    "overflow_test": "PASS",
+    "original_resolution_inspection": "PASS: all ten pages inspected; no new clipping, overflow, overlap, wrapping, or hierarchy change"
+  },
+  "result": "PASS: all presentation content OOXML and all rendered pixels are unchanged; only volatile core-property timestamps differ in the raw package.",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/pptx-shadow-refactor-20260717.txt"
+  ],
+  "cannot_claim": [
+    "raw whole-file PPTX byte identity because generated core-property and ZIP metadata are volatile",
+    "cross-platform render identity outside the tested Windows artifact-tool environment",
+    "new independent human approval for this non-visual refactor",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}
