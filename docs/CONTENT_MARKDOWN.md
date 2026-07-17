@@ -56,7 +56,10 @@ Ordinary lists use Markdown bullets:
 ### reasons
 - 避免自由 CSS 漂移
 - 讓品質證據可重現
+- 保留人工審查邊界
 ```
+
+Every array field currently requires exactly three entries. This applies to ordinary lists, process steps, architecture layers, and metrics. One-, two-, and four-item variants fail Semantic Model validation before either renderer runs. See [Array cardinality contract](CARDINALITY_CONTRACT.md) for the compatibility decision and migration guidance.
 
 `titleBreakAfter` is optional on every layout. When present, it must be a
 non-empty proper prefix of `title`. Both renderers use it as an explicit visual
@@ -69,6 +72,7 @@ Process steps and architecture layers use `title :: detail`:
 ### steps
 - 定義訊息 :: 每頁只保留一個核心觀點
 - 產生證據 :: Build、截圖與人工審查
+- 核准交付 :: 只交付通過 gate 的輸出
 ```
 
 Metrics use `label :: value :: detail`:
@@ -77,6 +81,7 @@ Metrics use `label :: value :: detail`:
 ### metrics
 - 語意版型 :: 10 :: 全部進入 allowlist
 - 像素差異 :: 0.000% :: 同環境 regression
+- 人工審查 :: PASS :: 綁定核准 baseline
 ```
 
 ## Required fields by layout

@@ -354,6 +354,8 @@ Prompt yourself:
 
 A Content Markdown or Semantic Slide Model change is breaking when it removes or renames a public field or layout, changes an existing field's type or meaning, makes a previously valid committed `content.md` fail, changes default rendering for an existing deck, or changes generated ownership/output paths. Adding an optional field or layout is backward-compatible only when existing content, generated modules, and both renderers remain unchanged under regression tests.
 
+All currently approved array-driven layouts require exactly three entries. Supporting another cardinality is a renderer/layout behavior change requiring dual-renderer geometry tests and reviewed visual baselines; do not relax the validator alone.
+
 ## Render and Visual Verification
 
 - Content parser changes must prove deterministic `content.md -> deck.mjs` projection and include failure-path fixtures for malformed headings, missing fields, structured items, and model limits.

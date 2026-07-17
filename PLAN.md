@@ -35,12 +35,14 @@
 - [x] Close the visual-gate review findings: semantic newline rejection, real-deck structure assertions, local pixel enforcement, and external human authority binding
 - [x] Correct the font provenance claim boundary and add an explicit upstream byte/digest verifier
 - [x] Replace deck-specific PPTX title wrapping with validated Semantic Model `titleBreakAfter` intent
+- [x] Close the array-layout review finding by enforcing the approved three-slot cardinality across all ten array fields
 
 ## Backlog
 
 <!-- Required: prioritized items not yet started -->
 
 - P1: Collect platform-specific PPTX and browser visual evidence before deciding whether CI can share one pixel baseline
+- P1: Add explicit Semantic Model versioning and migration policy before external consumers depend on breaking contracts
 - P2: Validate PDF export after renderer ownership and font substitution behavior are stable
 
 ## Decision Log
@@ -60,6 +62,7 @@
 - 2026-07-16: Human visual authority must be an explicit external decision bound to the exact baseline manifest digest; agents may serialize but must not infer or self-sign that decision.
 - 2026-07-16: Keep local font integrity and upstream provenance as separate claims. Use an opt-in network verifier for exact official-commit byte comparison; do not duplicate the same digest inside one mutable manifest or add remote availability to the default gate.
 - 2026-07-17: Express intentional title wrapping as optional Semantic Model `titleBreakAfter`; require a proper title prefix and make both renderers consume it instead of matching deck-specific copy.
+- 2026-07-17: Treat the reviewed three-slot geometry as the contract for all array-driven layouts. Reject one-, two-, and four-item arrays before rendering; adaptive cardinalities require redesigned dual-renderer geometry and separately approved baselines.
 
 ## Known Risks
 
@@ -75,3 +78,4 @@
 - A committed authority receipt cannot by itself prove real-world reviewer identity. Mitigation: receipt validation binds the decision to exact baseline bytes, CODEOWNERS routes review, and branch protection remains the external enforcement boundary.
 - The upstream font verifier depends on GitHub raw content availability and still cannot authenticate a reviewer. Mitigation: keep it outside default checks, restrict it to the official repository and pinned family path, and route font changes through CODEOWNERS review.
 - Explicit title wrapping duplicates a title prefix in Content Markdown. Mitigation: model validation rejects stale, complete-title, whitespace-padded, or injected break values before either renderer runs.
+- Fixed three-slot cardinality can tempt authors to pad sparse messages. Mitigation: require three meaningful entries, never invent or duplicate evidence, and introduce a separately reviewed low-cardinality layout when the message genuinely has fewer items.

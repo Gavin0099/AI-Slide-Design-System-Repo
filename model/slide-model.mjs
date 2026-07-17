@@ -16,7 +16,7 @@ export const EVIDENCE_STATUSES = Object.freeze(['verified', 'detected', 'unprove
 const LIMITS = Object.freeze({
   title: 22,
   subtitle: 36,
-  listItems: 3,
+  slotItems: 3,
   item: 32,
 })
 
@@ -39,18 +39,14 @@ function titleBreakIntent(slide, path) {
 }
 
 function list(value, path) {
-  if (!Array.isArray(value) || value.length === 0)
-    throw new Error(`${path} must contain at least one item`)
-  if (value.length > LIMITS.listItems)
-    throw new Error(`${path} exceeds ${LIMITS.listItems} items`)
+  if (!Array.isArray(value) || value.length !== LIMITS.slotItems)
+    throw new Error(`${path} must contain exactly ${LIMITS.slotItems} items`)
   value.forEach((item, index) => text(item, `${path}[${index}]`, LIMITS.item))
 }
 
 function structuredList(value, path, itemName) {
-  if (!Array.isArray(value) || value.length < 2)
-    throw new Error(`${path} must contain at least two ${itemName}s`)
-  if (value.length > LIMITS.listItems)
-    throw new Error(`${path} exceeds ${LIMITS.listItems} ${itemName}s`)
+  if (!Array.isArray(value) || value.length !== LIMITS.slotItems)
+    throw new Error(`${path} must contain exactly ${LIMITS.slotItems} ${itemName}s`)
   value.forEach((item, index) => {
     text(item?.title, `${path}[${index}].title`, LIMITS.item)
     text(item?.detail, `${path}[${index}].detail`, LIMITS.subtitle)
@@ -58,10 +54,8 @@ function structuredList(value, path, itemName) {
 }
 
 function metricList(value, path) {
-  if (!Array.isArray(value) || value.length < 2)
-    throw new Error(`${path} must contain at least two metrics`)
-  if (value.length > LIMITS.listItems)
-    throw new Error(`${path} exceeds ${LIMITS.listItems} metrics`)
+  if (!Array.isArray(value) || value.length !== LIMITS.slotItems)
+    throw new Error(`${path} must contain exactly ${LIMITS.slotItems} metrics`)
   value.forEach((metric, index) => {
     text(metric?.label, `${path}[${index}].label`, LIMITS.item)
     text(metric?.value, `${path}[${index}].value`, 16)

@@ -19,14 +19,14 @@ const fixtureDeck = {
       type: 'comparison',
       title: '比較',
       accent: 'governance',
-      left: { title: '左側', items: ['一'] },
-      right: { title: '右側', items: ['二'] },
+      left: { title: '左側', items: ['一', '二', '三'] },
+      right: { title: '右側', items: ['一', '二', '三'] },
     },
     {
       type: 'problem-solution',
       title: '問題解法',
-      problem: { title: '問題', items: ['一'] },
-      solution: { title: '解法', items: ['二'] },
+      problem: { title: '問題', items: ['一', '二', '三'] },
+      solution: { title: '解法', items: ['一', '二', '三'] },
     },
     {
       type: 'process',
@@ -35,6 +35,7 @@ const fixtureDeck = {
       steps: [
         { title: '第一步', detail: '定義' },
         { title: '第二步', detail: '驗證' },
+        { title: '第三步', detail: '交付' },
       ],
     },
     {
@@ -44,22 +45,24 @@ const fixtureDeck = {
       layers: [
         { title: '上層', detail: '決策' },
         { title: '下層', detail: '輸出' },
+        { title: '治理層', detail: '驗證' },
       ],
     },
     {
-      type: 'evidence', eyebrow: 'EVIDENCE', title: '證據', claim: '已驗證', status: 'verified', sources: ['模型', '截圖'],
+      type: 'evidence', eyebrow: 'EVIDENCE', title: '證據', claim: '已驗證', status: 'verified', sources: ['模型', '截圖', '審查'],
     },
     {
       type: 'metrics', eyebrow: 'METRICS', title: '指標', metrics: [
         { label: '版型', value: '10', detail: '受控' },
         { label: '差異', value: '0%', detail: '一致' },
+        { label: '審查', value: 'PASS', detail: '核准' },
       ],
     },
     {
-      type: 'decision', eyebrow: 'DECISION', title: '決策', decision: '通過後加入。', reasons: ['可驗證'], owner: 'Owner', nextAction: '繼續。',
+      type: 'decision', eyebrow: 'DECISION', title: '決策', decision: '通過後加入。', reasons: ['可驗證', '可重現', '可審查'], owner: 'Owner', nextAction: '繼續。',
     },
     {
-      type: 'closing', eyebrow: 'CLOSING', title: '收束', summary: '完成。', actions: ['交付'], nextAction: '下一階段。',
+      type: 'closing', eyebrow: 'CLOSING', title: '收束', summary: '完成。', actions: ['交付', '驗證', '審查'], nextAction: '下一階段。',
     },
   ],
 }

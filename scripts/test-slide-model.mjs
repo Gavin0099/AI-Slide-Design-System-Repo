@@ -41,8 +41,8 @@ const injectedListItem = structuredClone(validDeck)
 injectedListItem.slides = [{
   type: 'comparison',
   title: '安全邊界',
-  left: { title: '左側', items: ['ok\r\n---'] },
-  right: { title: '右側', items: ['safe'] },
+  left: { title: '左側', items: ['ok\r\n---', 'safe', 'safe'] },
+  right: { title: '右側', items: ['safe', 'safe', 'safe'] },
 }]
 assert.match(validateDeck(injectedListItem)[0], /left\.items\[0\] must not contain line breaks/)
 
@@ -56,10 +56,10 @@ const tooManyItems = {
     type: 'comparison',
     title: '比較',
     left: { title: '左側', items: ['一', '二', '三', '四'] },
-    right: { title: '右側', items: ['一'] },
+    right: { title: '右側', items: ['一', '二', '三'] },
   }],
 }
-assert.match(validateDeck(tooManyItems)[0], /exceeds 3 items/)
+assert.match(validateDeck(tooManyItems)[0], /must contain exactly 3 items/)
 
 const validExpandedDeck = {
   title: '擴充版型測試',
@@ -67,8 +67,8 @@ const validExpandedDeck = {
     {
       type: 'problem-solution',
       title: '問題與解法',
-      problem: { title: '問題', items: ['一'] },
-      solution: { title: '解法', items: ['二'] },
+      problem: { title: '問題', items: ['一', '二', '三'] },
+      solution: { title: '解法', items: ['一', '二', '三'] },
     },
     {
       type: 'process',
@@ -77,6 +77,7 @@ const validExpandedDeck = {
       steps: [
         { title: '第一步', detail: '定義內容' },
         { title: '第二步', detail: '驗證內容' },
+        { title: '第三步', detail: '審查內容' },
       ],
     },
     {
@@ -86,6 +87,7 @@ const validExpandedDeck = {
       layers: [
         { title: '上層', detail: '負責決策' },
         { title: '下層', detail: '負責輸出' },
+        { title: '治理層', detail: '負責驗證' },
       ],
     },
     {
@@ -94,7 +96,7 @@ const validExpandedDeck = {
       title: '證據',
       claim: '測試已通過可重現的檢查。',
       status: 'verified',
-      sources: ['模型測試', '視覺基準'],
+      sources: ['模型測試', '視覺基準', '人工審查'],
     },
     {
       type: 'metrics',
@@ -103,6 +105,7 @@ const validExpandedDeck = {
       metrics: [
         { label: '版型', value: '10', detail: '受控 allowlist' },
         { label: '差異', value: '0.000%', detail: '同環境像素比較' },
+        { label: '審查', value: 'PASS', detail: '人工核准' },
       ],
     },
     {
@@ -110,7 +113,7 @@ const validExpandedDeck = {
       eyebrow: 'DECISION',
       title: '決策',
       decision: '只有通過 review gate 的版型才能加入 allowlist。',
-      reasons: ['限制視覺漂移', '保存審查證據'],
+      reasons: ['限制視覺漂移', '保存審查證據', '維持雙 renderer 一致'],
       owner: 'Maintainer',
       nextAction: '建立下一個受控 renderer。',
     },
@@ -119,7 +122,7 @@ const validExpandedDeck = {
       eyebrow: 'CLOSING',
       title: '收束',
       summary: '語意與視覺責任已被清楚分離。',
-      actions: ['正式簡報套用', '規劃 PPTX'],
+      actions: ['正式簡報套用', '規劃 PPTX', '保存審查證據'],
       nextAction: '從相同模型輸出 editable PPTX。',
     },
   ],
@@ -128,10 +131,9 @@ assert.deepEqual(validateDeck(validExpandedDeck), [])
 
 const tooManySteps = structuredClone(validExpandedDeck)
 tooManySteps.slides[1].steps.push(
-  { title: '第三步', detail: '審查內容' },
   { title: '第四步', detail: '不應通過' },
 )
-assert.match(validateDeck(tooManySteps)[0], /exceeds 3 steps/)
+assert.match(validateDeck(tooManySteps)[0], /must contain exactly 3 steps/)
 
 const missingLayerDetail = structuredClone(validExpandedDeck)
 delete missingLayerDetail.slides[2].layers[1].detail
@@ -143,10 +145,9 @@ assert.match(validateDeck(invalidEvidenceStatus)[0], /status must be one of veri
 
 const tooManyMetrics = structuredClone(validExpandedDeck)
 tooManyMetrics.slides[4].metrics.push(
-  { label: '第三', value: '3', detail: '仍在範圍內' },
   { label: '第四', value: '4', detail: '不應通過' },
 )
-assert.match(validateDeck(tooManyMetrics)[0], /exceeds 3 metrics/)
+assert.match(validateDeck(tooManyMetrics)[0], /must contain exactly 3 metrics/)
 
 const missingDecisionAction = structuredClone(validExpandedDeck)
 delete missingDecisionAction.slides[5].nextAction
