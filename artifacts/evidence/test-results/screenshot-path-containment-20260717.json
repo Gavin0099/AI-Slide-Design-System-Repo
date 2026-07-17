@@ -1,0 +1,19 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-17T02:41:18Z",
+  "finished_at": "2026-07-17T02:41:46Z",
+  "runner": "codex-windows-chrome",
+  "linked_commit": "22357a8fd46bd49852ce2cf63e115009550d249c",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/screenshot-path-containment-20260717.txt"
+  ],
+  "cannot_claim": [
+    "realpath or symlink-target containment",
+    "authorization controls beyond the localhost ephemeral screenshot server",
+    "new human visual approval for this non-visual implementation slice",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}

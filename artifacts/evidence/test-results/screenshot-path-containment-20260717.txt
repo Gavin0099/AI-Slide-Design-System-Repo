@@ -1,0 +1,19 @@
+Screenshot server path containment evidence
+linked_commit=22357a8fd46bd49852ce2cf63e115009550d249c
+scope=capture-slide-screenshots static server build-root resolution
+old_guard=candidate.startsWith(buildRoot)
+new_guard=path.relative(resolve(buildRoot), resolve(candidate)) must be empty or a non-absolute non-parent path
+sibling_mutation=request path decodes and resolves to dist/ai-governance-x/secret.js
+mutation_precondition=old string-prefix guard returns true for the sibling candidate
+mutation_result=new containment rejects the sibling candidate and falls back to buildRoot/index.html
+parent_traversal=encoded parent request rejected and falls back to buildRoot/index.html
+valid_nested_asset=buildRoot/assets/app.js remains accepted
+check_started=2026-07-17T02:41:18Z
+check_finished=2026-07-17T02:41:46Z
+check_command=npm.cmd run check
+check_exit=0
+path_mutation_regression=PASS
+actual_capture=PASS; 10 screenshots captured through the hardened localhost server
+slidev_visual_regression=10/10 layouts PASS at 0.000% pixel difference
+existing_model_content_renderer_pptx_gates=PASS
+claim_boundary=the fix proves lexical path containment; symlink target canonicalization is not implemented or claimed
