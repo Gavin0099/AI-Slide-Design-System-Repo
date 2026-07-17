@@ -4,36 +4,40 @@ const TITLE_FIELDS = Object.freeze({
   title: 'scalar', titleBreakAfter: 'optional-scalar',
 })
 
+const SOURCE_FIELDS = Object.freeze({
+  sourceSection: 'optional-scalar', sourceHeading: 'optional-scalar',
+})
+
 const FIELD_KINDS = Object.freeze({
   cover: {
-    eyebrow: 'scalar', ...TITLE_FIELDS, subtitle: 'scalar',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, subtitle: 'scalar',
   },
   'key-message': {
-    eyebrow: 'scalar', ...TITLE_FIELDS, subtitle: 'scalar', visual: 'scalar', evidence: 'scalar',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, subtitle: 'scalar', visual: 'scalar', evidence: 'scalar',
   },
   comparison: {
-    ...TITLE_FIELDS, accent: 'scalar', leftTitle: 'scalar', leftItems: 'list', rightTitle: 'scalar', rightItems: 'list',
+    ...SOURCE_FIELDS, ...TITLE_FIELDS, accent: 'scalar', leftTitle: 'scalar', leftItems: 'list', rightTitle: 'scalar', rightItems: 'list',
   },
   'problem-solution': {
-    ...TITLE_FIELDS, problemTitle: 'scalar', problemItems: 'list', solutionTitle: 'scalar', solutionItems: 'list',
+    ...SOURCE_FIELDS, ...TITLE_FIELDS, problemTitle: 'scalar', problemItems: 'list', solutionTitle: 'scalar', solutionItems: 'list',
   },
   process: {
-    eyebrow: 'scalar', ...TITLE_FIELDS, steps: 'pairs',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, steps: 'pairs',
   },
   architecture: {
-    eyebrow: 'scalar', ...TITLE_FIELDS, layers: 'pairs',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, layers: 'pairs',
   },
   evidence: {
-    eyebrow: 'scalar', ...TITLE_FIELDS, claim: 'scalar', status: 'scalar', sources: 'list',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, claim: 'scalar', status: 'scalar', sources: 'list',
   },
   metrics: {
-    eyebrow: 'scalar', ...TITLE_FIELDS, metrics: 'metrics',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, metrics: 'metrics',
   },
   decision: {
-    eyebrow: 'scalar', ...TITLE_FIELDS, decision: 'scalar', reasons: 'list', owner: 'scalar', nextAction: 'scalar',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, decision: 'scalar', reasons: 'list', owner: 'scalar', nextAction: 'scalar',
   },
   closing: {
-    eyebrow: 'scalar', ...TITLE_FIELDS, summary: 'scalar', actions: 'list', nextAction: 'scalar',
+    ...SOURCE_FIELDS, eyebrow: 'scalar', ...TITLE_FIELDS, summary: 'scalar', actions: 'list', nextAction: 'scalar',
   },
 })
 
@@ -78,9 +82,13 @@ function parseField(lines, kind, sourceName, path) {
 }
 
 function buildSlide(type, fields) {
+  const source = {
+    ...(fields.sourceSection ? { sourceSection: fields.sourceSection } : {}),
+    ...(fields.sourceHeading ? { sourceHeading: fields.sourceHeading } : {}),
+  }
   if (type === 'comparison') {
     return {
-      type, title: fields.title,
+      type, ...source, title: fields.title,
       ...(fields.titleBreakAfter ? { titleBreakAfter: fields.titleBreakAfter } : {}),
       accent: fields.accent,
       left: { title: fields.leftTitle, items: fields.leftItems },
@@ -89,7 +97,7 @@ function buildSlide(type, fields) {
   }
   if (type === 'problem-solution') {
     return {
-      type, title: fields.title,
+      type, ...source, title: fields.title,
       ...(fields.titleBreakAfter ? { titleBreakAfter: fields.titleBreakAfter } : {}),
       problem: { title: fields.problemTitle, items: fields.problemItems },
       solution: { title: fields.solutionTitle, items: fields.solutionItems },

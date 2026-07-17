@@ -18,6 +18,8 @@ const LIMITS = Object.freeze({
   title: 22,
   description: 120,
   subtitle: 36,
+  sourceSection: 32,
+  sourceHeading: 96,
   slotItems: 3,
   item: 32,
 })
@@ -104,6 +106,10 @@ export function validateDeck(deck) {
 
   deck.slides.forEach((slide, index) => {
     const path = `slides[${index}]`
+    if (slide?.sourceSection !== undefined)
+      capture(errors, () => text(slide.sourceSection, `${path}.sourceSection`, LIMITS.sourceSection))
+    if (slide?.sourceHeading !== undefined)
+      capture(errors, () => text(slide.sourceHeading, `${path}.sourceHeading`, LIMITS.sourceHeading))
     const typeIsValid = capture(errors, () => {
       if (!SLIDE_TYPES.includes(slide?.type))
         throw new Error(`${path}.type must be one of ${SLIDE_TYPES.join(', ')}`)

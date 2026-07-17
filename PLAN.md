@@ -41,6 +41,7 @@
 - [x] Validate deck description metadata and comparison accent tokens directly in the Semantic Model
 - [x] Remove the dead PPTX shadow abstraction while preserving byte-level OOXML parts and rendered pixels
 - [x] Add a fail-closed Windows/macOS PowerPoint evidence harness and record the first environment blockers
+- [x] Enforce source-report pagination so the H1 cover and every H2 section map one-to-one, in order, to Semantic Model slides
 
 ## Backlog
 
@@ -73,6 +74,7 @@
 - 2026-07-17: Require direct-model `deck.description` to be non-empty, single-line, and at most 120 characters; restrict `comparison.accent` to the `governance` token. This tightens validation for direct Semantic Model consumers while leaving committed Content Markdown output unchanged.
 - 2026-07-17: Keep the editable PPTX effect surface explicitly shadow-free. Remove undefined shadow options and no-op call-site flags; enforce absence of outer, inner, and preset shadow elements in OOXML regression.
 - 2026-07-17: Keep the shared Office pixel baseline disabled until licensed Windows and macOS PowerPoint each produce two deterministic receipts for the exact same PPTX digest with Noto Sans TC installed. The current Windows installation is blocked by an unlicensed-product sign-in gate and no macOS Office host is attached, so the decision is `not_enough_evidence`.
+- 2026-07-17: Treat the source report H1 as the cover and every H2 occurrence as exactly one slide, including repeated visible section numbers. Preserve order and bind each slide to `sourceSection` plus `sourceHeading`; the coverage gate rejects merged, split, dropped, duplicated, or reordered sections before rendering.
 
 ## Known Risks
 
@@ -94,3 +96,4 @@
 - Metadata rendered into Slidev frontmatter or PPTX properties can bypass parser-only checks when callers construct decks directly. Mitigation: validate description and accent in `validateDeck`, with missing, newline-injection, and allowlist regression through both renderers.
 - Dead renderer options can imply unsupported visual behavior and mislead future changes. Mitigation: remove the shadow abstraction and express the intended no-shadow contract as an observable OOXML assertion.
 - Office render evidence can be mislabeled or collected from a substitute renderer. Mitigation: bind receipts to the actual host OS, exact PPTX and per-slide PNG hashes, require two stable runs per platform, retain operator-attestation limits, and route any shared candidate to human authority review.
+- One-to-one section coverage proves pagination and heading identity, but not that every source detail was summarized faithfully inside its slide. Mitigation: retain the source-section trace on every slide, require human content review, and add field-level content coverage before making automated completeness claims.

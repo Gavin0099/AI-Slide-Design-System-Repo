@@ -10,6 +10,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const runtimeRoot = path.join(repoRoot, 'artifacts', 'runtime', 'pptx')
 const outputPath = path.join(runtimeRoot, 'semantic-model-test.pptx')
 const explicitBreakOutputPath = path.join(runtimeRoot, 'explicit-title-break-test.pptx')
+const sourceMetadataOutputPath = path.join(runtimeRoot, 'source-metadata-test.pptx')
 
 function decodeXml(value) {
   return value
@@ -101,6 +102,21 @@ assert.equal(shadowEffectCount, 0, 'Editable PPTX must not emit outer, inner, or
 
 const theme = await archive.file('ppt/theme/theme1.xml').async('string')
 assert.match(theme, /Noto Sans TC/, 'PPTX theme must declare the governed Chinese font family')
+
+const sourceMappedDeck = structuredClone(deck)
+sourceMappedDeck.slides.forEach((slide, index) => {
+  slide.sourceSection = index === 0 ? 'h1:1' : `h2:${index}`
+  slide.sourceHeading = `來源段落 ${index + 1}`
+})
+await renderDeckToPptx(sourceMappedDeck, sourceMetadataOutputPath)
+const sourceMetadataArchive = await JSZip.loadAsync(await readFile(sourceMetadataOutputPath))
+for (const entry of slideEntries) {
+  assert.equal(
+    await sourceMetadataArchive.file(entry).async('string'),
+    await archive.file(entry).async('string'),
+    `${entry} must remain unchanged when source coverage metadata is present`,
+  )
+}
 
 const explicitBreakDeck = structuredClone(deck)
 explicitBreakDeck.slides[0].title = '完全不同的封面標題'

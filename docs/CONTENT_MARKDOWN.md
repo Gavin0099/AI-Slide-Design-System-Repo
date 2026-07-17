@@ -2,6 +2,35 @@
 
 `decks/**/content.md` is the canonical human-authored deck content. The generated `deck.mjs`, generated `slides.md`, Slidev output, and PPTX output must not be used as round-trip sources.
 
+## Source Markdown pagination contract
+
+When an existing report or briefing Markdown is supplied as source material, its
+heading structure is a pagination instruction, not merely a topic hint:
+
+- the single `#` heading maps to the cover slide;
+- every `##` heading maps to exactly one following slide;
+- H2 sections remain in source order;
+- repeated visible numbers such as two separate `## 11` headings still produce
+  two separate slides;
+- `###` headings, paragraphs, lists, tables, code blocks, and speaker notes stay
+  within their owning H1/H2 section;
+- the planner may select a governed layout and condense copy inside a section,
+  but it must not merge sections, split a section, reorder sections, or drop one.
+
+Each planned slide records `sourceSection` and `sourceHeading`. These optional
+Semantic Model fields do not change either renderer's visible output. The
+coverage gate validates count, order, uniqueness, and exact source-heading
+mapping:
+
+```powershell
+npm run source:coverage -- --source <source.md> --deck <generated-deck.mjs>
+```
+
+This source format is intentionally distinct from canonical Content Markdown.
+Source Markdown owns pagination and prose; `content.md` owns the selected
+semantic layout and renderer fields. The generated deck must satisfy both the
+one-to-one source coverage gate and the normal Semantic Model validation.
+
 ## Default command
 
 ```powershell
@@ -49,6 +78,20 @@ AI SLIDE DESIGN SYSTEM
 ```
 
 Text fields may span multiple physical lines; the parser joins them with spaces. Tabs, unknown fields, duplicate fields, missing required fields, and prose outside a `###` field fail closed.
+
+For a deck planned from Source Markdown, add both traceability fields to every
+slide section:
+
+```md
+### sourceSection
+h2:1
+### sourceHeading
+2 ｜ LLM 是什麼?
+```
+
+The cover uses `h1:1`; later H2 sections use `h2:1`, `h2:2`, and so on in
+physical source order. These IDs are independent of repeated human-visible page
+numbers.
 
 ## Lists and structured items
 

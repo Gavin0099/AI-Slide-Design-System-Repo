@@ -14,6 +14,15 @@ const validDeck = {
 
 assert.deepEqual(validateDeck(validDeck), [])
 
+const sourceMappedDeck = structuredClone(validDeck)
+sourceMappedDeck.slides[0].sourceSection = 'h1:1'
+sourceMappedDeck.slides[0].sourceHeading = '測試簡報'
+assert.deepEqual(validateDeck(sourceMappedDeck), [])
+
+const injectedSourceHeading = structuredClone(sourceMappedDeck)
+injectedSourceHeading.slides[0].sourceHeading = 'ok\n## injected'
+assert.match(validateDeck(injectedSourceHeading)[0], /sourceHeading must not contain line breaks/)
+
 const explicitTitleBreak = structuredClone(validDeck)
 explicitTitleBreak.slides[0].titleBreakAfter = '有效'
 assert.deepEqual(validateDeck(explicitTitleBreak), [])

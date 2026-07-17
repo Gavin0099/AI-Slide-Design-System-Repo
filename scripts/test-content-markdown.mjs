@@ -51,4 +51,11 @@ assert.throws(
 const withoutOptionalTitleBreak = source.replace(/\n### titleBreakAfter\n讓 AI 在受控設計空間/, '')
 assert.equal(parseContentMarkdown(withoutOptionalTitleBreak).slides[0].titleBreakAfter, undefined)
 
+const withSourceMetadata = source.replace(
+  '### eyebrow\nAI SLIDE DESIGN SYSTEM',
+  '### sourceSection\nh1:1\n### sourceHeading\nAI 投影片設計系統\n### eyebrow\nAI SLIDE DESIGN SYSTEM',
+)
+assert.equal(parseContentMarkdown(withSourceMetadata).slides[0].sourceSection, 'h1:1')
+assert.equal(parseContentMarkdown(withSourceMetadata).slides[0].sourceHeading, 'AI 投影片設計系統')
+
 console.log('Content Markdown tests passed: deterministic projection plus layout, field, structure, and model failure paths')

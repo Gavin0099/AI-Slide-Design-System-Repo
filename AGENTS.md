@@ -341,6 +341,8 @@ Prompt yourself:
 - `model/slide-model.mjs` owns the canonical Semantic Slide Model allowlist, validation rules, and density limits.
 - `theme/**` owns reusable visual tokens, components, layouts, and the governed font asset.
 - Renderers consume the generated Semantic Model module; they must not reinterpret `content.md` independently.
+- For sectioned source reports, the H1 is the cover and every H2 occurrence is exactly one slide. Repeated visible numbers remain separate slides; do not merge, split, drop, duplicate, or reorder source sections.
+- Each projected source-report slide must retain `sourceSection` and `sourceHeading`, and the section-coverage gate must pass before either renderer is treated as faithful to the source pagination.
 
 ## Artifact Ownership
 
@@ -363,6 +365,7 @@ Deck metadata and semantic tokens are part of the model boundary: `deck.descript
 ## Render and Visual Verification
 
 - Content parser changes must prove deterministic `content.md -> deck.mjs` projection and include failure-path fixtures for malformed headings, missing fields, structured items, and model limits.
+- Source-report ingestion changes must prove H1/H2 one-to-one coverage, including repeated headings and fenced-code immunity, plus merge, split, drop, duplicate, and reorder failure regressions.
 - Renderer changes must prove one-to-one slide projection, complete semantic text, expected editable-object ownership, and absence of flattened slide pictures unless a reviewed layout explicitly requires raster content.
 - Screenshot server path handling must use `path.relative` containment and retain traversal plus sibling-prefix mutation regression; string-prefix checks are insufficient.
 - Layout or visible example-content changes require approved 1280x720 baselines, zero-diff recapture in the reviewed environment, and original-resolution inspection for overflow, clipping, wrapping, hierarchy, and unintended overlap.

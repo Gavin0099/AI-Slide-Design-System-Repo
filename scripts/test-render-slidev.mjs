@@ -79,6 +79,12 @@ function assertOneToOneStructure(deck, label) {
 
 const rendered = assertOneToOneStructure(fixtureDeck, 'fixture deck')
 assert.match(rendered, /# 封面<br>標題/, 'Slidev renderer must consume explicit title break intent')
+const sourceMappedFixture = structuredClone(fixtureDeck)
+sourceMappedFixture.slides.forEach((slide, index) => {
+  slide.sourceSection = index === 0 ? 'h1:1' : `h2:${index}`
+  slide.sourceHeading = `來源段落 ${index + 1}`
+})
+assert.equal(renderDeck(sourceMappedFixture), rendered, 'Source coverage metadata must not change Slidev output')
 assertOneToOneStructure(realDeck, 'decks/ai-governance/deck.mjs')
 for (const layout of ['evidence', 'metrics', 'decision', 'closing'])
   assert.match(rendered, new RegExp(`layout: "${layout}"`))
