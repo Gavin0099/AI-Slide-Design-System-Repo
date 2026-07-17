@@ -1,0 +1,19 @@
+{
+  "receipt_schema": "test_evidence_receipt.v0.1",
+  "status": "report_only",
+  "command": "npm.cmd run check",
+  "exit_code": 0,
+  "started_at": "2026-07-17T02:27:08Z",
+  "finished_at": "2026-07-17T02:27:36Z",
+  "runner": "codex-windows",
+  "linked_commit": "c4220deee95a34211f20e2706f3d39c5554649d5",
+  "output_artifacts": [
+    "artifacts/evidence/test-results/semantic-validation-aggregation-20260717.txt"
+  ],
+  "cannot_claim": [
+    "semantic truth or factual correctness of slide content",
+    "automatic coverage of validation rules added without updating regression fixtures",
+    "new human visual approval for this non-visual implementation slice",
+    "receipt authenticity: every field is fabricatable by a direct writer"
+  ]
+}

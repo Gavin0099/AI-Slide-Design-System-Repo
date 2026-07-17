@@ -1,0 +1,21 @@
+Semantic validation aggregation evidence
+linked_commit=c4220deee95a34211f20e2706f3d39c5554649d5
+scope=validateDeck whole-deck error aggregation
+contract=return all independent errors in deterministic deck, slide, field, and item order
+mutation_fixture=15 simultaneous errors across deck title, cover, evidence, metrics, and unknown-layout slides
+aggregation_result=15/15 expected errors returned together in exact order with no duplicates
+collection_behavior=wrong cardinality and invalid existing items are independently reported
+anti_cascade=invalid collection shapes stop item traversal; unknown layouts skip layout-specific fields; invalid titles suppress dependent titleBreakAfter prefix checks
+consumer_behavior=defineDeck, Slidev renderer, and PptxGenJS renderer throw the identical newline-joined error set
+check_started=2026-07-17T02:27:08Z
+check_finished=2026-07-17T02:27:36Z
+check_command=npm.cmd run check
+check_exit=0
+model_regression=PASS
+validation_aggregation_regression=PASS
+cardinality_regression=PASS; 20 mutations retained
+content_markdown_regression=PASS
+slidev_renderer_regression=PASS
+pptx_structural_regression=PASS; 10 native editable slides
+slidev_visual_regression=10/10 layouts PASS at 0.000% pixel difference
+claim_boundary=validation aggregates structural and allowlist failures; it does not validate factual or semantic truth
