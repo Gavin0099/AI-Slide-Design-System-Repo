@@ -356,6 +356,8 @@ A Content Markdown or Semantic Slide Model change is breaking when it removes or
 
 All currently approved array-driven layouts require exactly three entries. Supporting another cardinality is a renderer/layout behavior change requiring dual-renderer geometry tests and reviewed visual baselines; do not relax the validator alone.
 
+`validateDeck` returns all independent validation errors in deterministic deck/slide/field order. Do not reintroduce a whole-deck first-error catch, and do not emit dependent layout-field errors after an unknown slide type.
+
 ## Render and Visual Verification
 
 - Content parser changes must prove deterministic `content.md -> deck.mjs` projection and include failure-path fixtures for malformed headings, missing fields, structured items, and model limits.

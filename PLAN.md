@@ -36,6 +36,7 @@
 - [x] Correct the font provenance claim boundary and add an explicit upstream byte/digest verifier
 - [x] Replace deck-specific PPTX title wrapping with validated Semantic Model `titleBreakAfter` intent
 - [x] Close the array-layout review finding by enforcing the approved three-slot cardinality across all ten array fields
+- [x] Aggregate all independent Semantic Model validation errors in one deterministic result
 
 ## Backlog
 
@@ -63,6 +64,7 @@
 - 2026-07-16: Keep local font integrity and upstream provenance as separate claims. Use an opt-in network verifier for exact official-commit byte comparison; do not duplicate the same digest inside one mutable manifest or add remote availability to the default gate.
 - 2026-07-17: Express intentional title wrapping as optional Semantic Model `titleBreakAfter`; require a proper title prefix and make both renderers consume it instead of matching deck-specific copy.
 - 2026-07-17: Treat the reviewed three-slot geometry as the contract for all array-driven layouts. Reject one-, two-, and four-item arrays before rendering; adaptive cardinalities require redesigned dual-renderer geometry and separately approved baselines.
+- 2026-07-17: Make Semantic Model validation collect independent errors in deterministic deck/slide/field/item order. Unknown slide types validate only common fields so aggregation does not invent dependent schema errors.
 
 ## Known Risks
 
@@ -79,3 +81,4 @@
 - The upstream font verifier depends on GitHub raw content availability and still cannot authenticate a reviewer. Mitigation: keep it outside default checks, restrict it to the official repository and pinned family path, and route font changes through CODEOWNERS review.
 - Explicit title wrapping duplicates a title prefix in Content Markdown. Mitigation: model validation rejects stale, complete-title, whitespace-padded, or injected break values before either renderer runs.
 - Fixed three-slot cardinality can tempt authors to pad sparse messages. Mitigation: require three meaningful entries, never invent or duplicate evidence, and introduce a separately reviewed low-cardinality layout when the message genuinely has fewer items.
+- Aggregated validation can overwhelm authors if it emits cascading errors. Mitigation: stop at invalid collection shape, skip layout-specific checks for unknown types, and suppress title-break prefix checks when the title itself is invalid.

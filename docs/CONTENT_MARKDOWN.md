@@ -101,6 +101,8 @@ Metrics use `label :: value :: detail`:
 
 The Semantic Slide Model remains the authority for title length, list density, evidence status, allowed visuals, and other semantic limits. A Markdown file that is structurally valid can still fail model validation.
 
+Semantic validation reports all independent model errors together in deterministic deck, slide, field, and item order. Fixing one field should not be required merely to reveal unrelated errors elsewhere in the same deck. Unknown layouts report their type and common-field errors without guessing at layout-specific fields.
+
 ## Generated ownership
 
 - Edit: `decks/**/content.md`.
