@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { lineEndingEquivalentDigests } from './check-governance-projection.mjs'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const workflows = [
@@ -32,5 +33,11 @@ for (const triggerPath of [
 }
 
 assert.match(slideQuality, /node scripts\/test-github-workflows\.mjs/u, 'slide quality must execute the workflow regression before dependency installation')
+
+const lf = Buffer.from('protected\ncontent\n', 'utf8')
+const crlf = Buffer.from('protected\r\ncontent\r\n', 'utf8')
+assert.deepEqual(lineEndingEquivalentDigests(lf), lineEndingEquivalentDigests(crlf), 'protected text hashes must treat LF and CRLF as equivalent')
+const mutated = Buffer.from('protected\nchanged\n', 'utf8')
+assert.equal([...lineEndingEquivalentDigests(mutated)].some(value => lineEndingEquivalentDigests(lf).has(value)), false, 'non-line-ending protected text mutations must remain rejected')
 
 console.log('GitHub workflow regression passed: Node 24 actions are pinned, internal GitLab submodules are skipped, and projection checks stay repo-local')

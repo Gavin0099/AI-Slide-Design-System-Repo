@@ -12,6 +12,17 @@ function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex')
 }
 
+export function lineEndingEquivalentDigests(bytes) {
+  const digests = new Set([sha256(bytes)])
+  const source = bytes.toString('utf8')
+  if (Buffer.from(source, 'utf8').equals(bytes)) {
+    const lf = source.replaceAll('\r\n', '\n').replaceAll('\r', '\n')
+    digests.add(sha256(Buffer.from(lf, 'utf8')))
+    digests.add(sha256(Buffer.from(lf.replaceAll('\n', '\r\n'), 'utf8')))
+  }
+  return digests
+}
+
 function scalar(source, key) {
   return source.match(new RegExp(`^${key.replaceAll('.', '\\.')}:\\s*["']?([^"'\\s#]+)`, 'mu'))?.[1]
 }
@@ -62,7 +73,7 @@ export async function checkGovernanceProjection({ repoRoot = defaultRepoRoot, gi
     const bytes = relativePath === 'AGENTS.base.md'
       ? agentsBase
       : await readFile(path.join(repoRoot, ...relativePath.split('/')))
-    assert.equal(sha256(bytes), recorded, `protected governance file drifted: ${relativePath}`)
+    assert.ok(lineEndingEquivalentDigests(bytes).has(recorded), `protected governance file drifted beyond LF/CRLF equivalence: ${relativePath}`)
   }
   assert.match(agentsBase.toString('utf8'), /governance-baseline:\s*protected/u, 'AGENTS.base.md must retain its protected sentinel')
 
