@@ -26,17 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
-          submodules: recursive
+          # This workflow validates the committed governance projection. The
+          # authoritative submodule lives on an internal GitLab host and is
+          # intentionally not cloned by GitHub-hosted runners.
+          submodules: "false"
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-node@v6
         with:
-          python-version: "3.11"
+          node-version: 22
 
-      - name: Run governance drift check
-        run: |
-          python governance/governance_tools/governance_drift_checker.py \
-            --repo . \
-            --framework-root governance \
-            --format human
+      - name: Verify committed governance projection
+        run: node scripts/check-governance-projection.mjs

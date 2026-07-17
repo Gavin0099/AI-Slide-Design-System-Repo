@@ -9,12 +9,16 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
-          submodules: recursive
-      - uses: actions/setup-node@v4
+          # The governance submodule is hosted on the corporate GitLab network,
+          # which GitHub-hosted runners cannot resolve. Slide checks use only
+          # the repo-owned governance projection and application sources.
+          submodules: "false"
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
+      - run: node scripts/test-github-workflows.mjs
       - run: npm ci
       - run: npm run check:ci
