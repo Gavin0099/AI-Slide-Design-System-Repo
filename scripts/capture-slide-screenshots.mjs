@@ -64,11 +64,17 @@ async function findBrowser() {
   throw new Error('No Chrome-compatible browser found. Set SLIDEV_BROWSER_PATH to an executable path.')
 }
 
-function safeBuildPath(urlPath) {
+export function isPathContained(root, candidate) {
+  const relative = path.relative(path.resolve(root), path.resolve(candidate))
+  return relative === ''
+    || (relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative))
+}
+
+export function safeBuildPath(urlPath, root = buildRoot) {
   const decoded = decodeURIComponent(urlPath)
   const relative = decoded === '/' ? 'index.html' : decoded.replace(/^\/+/, '')
-  const candidate = path.resolve(buildRoot, relative)
-  return candidate.startsWith(buildRoot) ? candidate : path.join(buildRoot, 'index.html')
+  const candidate = path.resolve(root, relative)
+  return isPathContained(root, candidate) ? candidate : path.join(root, 'index.html')
 }
 
 async function startStaticServer() {

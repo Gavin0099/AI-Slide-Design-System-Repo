@@ -59,6 +59,7 @@ npm run pptx:test
 - `npm run check:ci`：跨平台 CI gate；在共用 pixel baseline 有平台證據前不執行 pixel regression。
 - `npm run visual:baseline:check`：不啟動瀏覽器，只驗證 committed baseline 的尺寸與 SHA-256；不代表目前 render 或 human approval 已通過。
 - `npm run visual:test`：以本機 Chrome 重新擷取圖片並執行 pixel diff；可用 `SLIDEV_BROWSER_PATH` 指定 Chrome-compatible executable。
+- `npm run visual:path:test`：以 `path.relative` 驗證 screenshot server 的 build-root containment，拒絕 parent traversal 與 sibling-prefix 繞過。
 - `npm run visual:authority:check`：驗證 human decision receipt 的 schema 與 baseline manifest digest binding；authority 邊界見 `docs/VISUAL_REVIEW_GATE.md`。
 - `npm run pptx:build`：先更新 `deck.mjs`，再從同一 Semantic Model 輸出 `dist/ai-governance/ai-governance-editable.pptx`。
 - `npm run pptx:test`：解開 OOXML 並驗證投影片數量、語意文字、原生可編輯物件、備註與無平面化圖片。

@@ -362,6 +362,7 @@ All currently approved array-driven layouts require exactly three entries. Suppo
 
 - Content parser changes must prove deterministic `content.md -> deck.mjs` projection and include failure-path fixtures for malformed headings, missing fields, structured items, and model limits.
 - Renderer changes must prove one-to-one slide projection, complete semantic text, expected editable-object ownership, and absence of flattened slide pictures unless a reviewed layout explicitly requires raster content.
+- Screenshot server path handling must use `path.relative` containment and retain traversal plus sibling-prefix mutation regression; string-prefix checks are insufficient.
 - Layout or visible example-content changes require approved 1280x720 baselines, zero-diff recapture in the reviewed environment, and original-resolution inspection for overflow, clipping, wrapping, hierarchy, and unintended overlap.
 - PPTX delivery additionally requires full-size rendering of every page and `slides_test.py` overflow inspection. Report font substitution and cross-platform behavior as claim boundaries unless separately verified.
 
