@@ -30,6 +30,8 @@ The first non-empty line is the deck title. One or more blockquote lines provide
 > Audience-facing deck description.
 ```
 
+The projected `deck.description` must be non-empty, single-line, and at most 120 characters. Multiple Markdown blockquote lines are joined with spaces before Semantic Model validation.
+
 ## Slide and field syntax
 
 Each slide starts with an allowlisted layout heading. Every layout field uses a level-three heading.
@@ -100,6 +102,8 @@ Metrics use `label :: value :: detail`:
 | `closing` | `eyebrow`, `title`, `summary`, `actions`, `nextAction` |
 
 The Semantic Slide Model remains the authority for title length, list density, evidence status, allowed visuals, and other semantic limits. A Markdown file that is structurally valid can still fail model validation.
+
+`comparison.accent` is a governed semantic token, not free-form styling. The current allowlist contains only `governance`; missing, multiline, or unsupported values fail before either renderer runs.
 
 Semantic validation reports all independent model errors together in deterministic deck, slide, field, and item order. Fixing one field should not be required merely to reveal unrelated errors elsewhere in the same deck. Unknown layouts report their type and common-field errors without guessing at layout-specific fields.
 

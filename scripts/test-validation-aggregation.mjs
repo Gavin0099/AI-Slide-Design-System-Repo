@@ -6,6 +6,7 @@ import { renderDeck } from './render-slidev.mjs'
 
 const invalidDeck = {
   title: 'bad\n---',
+  description: 'Aggregation fixture',
   slides: [
     {
       type: 'cover',
@@ -62,7 +63,7 @@ const expectedErrors = [
 assert.deepEqual(validateDeck(realDeck), [])
 assert.deepEqual(validateDeck(invalidDeck), expectedErrors)
 assert.equal(new Set(validateDeck(invalidDeck)).size, expectedErrors.length, 'independent errors must not be duplicated')
-assert.deepEqual(validateDeck({ title: '', slides: null }), [
+assert.deepEqual(validateDeck({ title: '', description: 'Root fixture', slides: null }), [
   'deck.title must be a non-empty string',
   'deck.slides must contain at least one slide',
 ])

@@ -3,6 +3,7 @@ import { validateDeck } from '../model/slide-model.mjs'
 
 const validDeck = {
   title: '測試簡報',
+  description: '用於 Semantic Model regression 的測試簡報。',
   slides: [{
     type: 'cover',
     eyebrow: 'TEST',
@@ -41,6 +42,7 @@ const injectedListItem = structuredClone(validDeck)
 injectedListItem.slides = [{
   type: 'comparison',
   title: '安全邊界',
+  accent: 'governance',
   left: { title: '左側', items: ['ok\r\n---', 'safe', 'safe'] },
   right: { title: '右側', items: ['safe', 'safe', 'safe'] },
 }]
@@ -52,9 +54,11 @@ assert.match(validateDeck(overlongTitle)[0], /exceeds 22 characters/)
 
 const tooManyItems = {
   title: '測試簡報',
+  description: '用於陣列上限 regression 的測試簡報。',
   slides: [{
     type: 'comparison',
     title: '比較',
+    accent: 'governance',
     left: { title: '左側', items: ['一', '二', '三', '四'] },
     right: { title: '右側', items: ['一', '二', '三'] },
   }],
@@ -63,6 +67,7 @@ assert.match(validateDeck(tooManyItems)[0], /must contain exactly 3 items/)
 
 const validExpandedDeck = {
   title: '擴充版型測試',
+  description: '用於擴充版型 regression 的測試簡報。',
   slides: [
     {
       type: 'problem-solution',

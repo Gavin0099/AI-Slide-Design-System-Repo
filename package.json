@@ -17,6 +17,7 @@
     "font:provenance:verify": "node scripts/verify-font-provenance.mjs",
     "model:test": "node scripts/test-slide-model.mjs",
     "validation:test": "node scripts/test-validation-aggregation.mjs",
+    "metadata:test": "node scripts/test-model-metadata-validation.mjs",
     "cardinality:test": "node scripts/test-cardinality-contract.mjs",
     "renderer:test": "node scripts/test-render-slidev.mjs",
     "pptx:build": "npm run content:build && node scripts/render-pptx.mjs",
@@ -29,7 +30,7 @@
     "visual:authority:test": "node scripts/test-visual-review-authority.mjs",
     "visual:authority:check": "node scripts/check-visual-review-authority.mjs",
     "visual:test": "npm run build && node scripts/visual-regression.mjs",
-    "check:ci": "npm run font:check && npm run font:provenance:test && npm run content:check && npm run content:test && npm run model:test && npm run validation:test && npm run cardinality:test && npm run renderer:test && npm run pptx:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run visual:path:test && npm run visual:authority:test && npm run visual:authority:check && npm run build",
+    "check:ci": "npm run font:check && npm run font:provenance:test && npm run content:check && npm run content:test && npm run model:test && npm run validation:test && npm run metadata:test && npm run cardinality:test && npm run renderer:test && npm run pptx:test && npm run lint && npm run render:check && npm run visual:baseline:check && npm run visual:path:test && npm run visual:authority:test && npm run visual:authority:check && npm run build",
     "check": "npm run check:ci && npm run visual:test"
   },
   "devDependencies": {

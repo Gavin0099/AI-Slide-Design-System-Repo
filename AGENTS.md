@@ -358,6 +358,8 @@ All currently approved array-driven layouts require exactly three entries. Suppo
 
 `validateDeck` returns all independent validation errors in deterministic deck/slide/field order. Do not reintroduce a whole-deck first-error catch, and do not emit dependent layout-field errors after an unknown slide type.
 
+Deck metadata and semantic tokens are part of the model boundary: `deck.description` must be validated as single-line text, and `comparison.accent` must remain on the explicit allowlist before either renderer consumes them.
+
 ## Render and Visual Verification
 
 - Content parser changes must prove deterministic `content.md -> deck.mjs` projection and include failure-path fixtures for malformed headings, missing fields, structured items, and model limits.

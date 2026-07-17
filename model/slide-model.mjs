@@ -12,9 +12,11 @@ export const SLIDE_TYPES = Object.freeze([
 ])
 
 export const EVIDENCE_STATUSES = Object.freeze(['verified', 'detected', 'unproven'])
+export const COMPARISON_ACCENTS = Object.freeze(['governance'])
 
 const LIMITS = Object.freeze({
   title: 22,
+  description: 120,
   subtitle: 36,
   slotItems: 3,
   item: 32,
@@ -94,6 +96,7 @@ export function validateDeck(deck) {
   const errors = []
 
   capture(errors, () => text(deck?.title, 'deck.title', LIMITS.title))
+  capture(errors, () => text(deck?.description, 'deck.description', LIMITS.description))
   if (!Array.isArray(deck?.slides) || deck.slides.length === 0) {
     errors.push('deck.slides must contain at least one slide')
     return errors
@@ -124,6 +127,9 @@ export function validateDeck(deck) {
     }
 
     if (slide.type === 'comparison') {
+      const accentIsValid = capture(errors, () => text(slide.accent, `${path}.accent`, LIMITS.item))
+      if (accentIsValid && !COMPARISON_ACCENTS.includes(slide.accent))
+        errors.push(`${path}.accent must be one of ${COMPARISON_ACCENTS.join(', ')}`)
       capture(errors, () => text(slide.left?.title, `${path}.left.title`, LIMITS.item))
       capture(errors, () => text(slide.right?.title, `${path}.right.title`, LIMITS.item))
       list(slide.left?.items, `${path}.left.items`, errors)
