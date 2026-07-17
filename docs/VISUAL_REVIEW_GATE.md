@@ -9,6 +9,8 @@ The visual gate separates four surfaces that must not be collapsed:
 
 `npm run check` is the local Windows/Chrome gate and includes current-render pixel comparison. `npm run check:ci` is the platform-neutral GitHub Actions gate and intentionally excludes pixel comparison until cross-platform evidence supports one shared baseline.
 
+PowerPoint Office rendering is a separate evidence surface governed by `docs/CROSS_PLATFORM_PPTX_EVIDENCE.md`. Browser PNGs and Office PNGs must not share an authority claim merely because their dimensions match.
+
 ## Human authority contract
 
 The canonical authority receipt is:

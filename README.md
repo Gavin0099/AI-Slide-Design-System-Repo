@@ -64,6 +64,14 @@ npm run pptx:test
 - `npm run pptx:build`：先更新 `deck.mjs`，再從同一 Semantic Model 輸出 `dist/ai-governance/ai-governance-editable.pptx`。
 - `npm run pptx:test`：解開 OOXML 並驗證投影片數量、語意文字、原生可編輯物件、備註與無平面化圖片。
 
+## Cross-platform Office evidence
+
+- `npm run office:evidence:collect` validates the capture host, PPTX digest, per-slide PNG dimensions and SHA-256 values, then writes one operator-attested Windows or macOS receipt.
+- `npm run office:evidence:compare` requires two receipts per platform and fails closed to shared-candidate, per-platform, unstable, invalid, or insufficient evidence.
+- `npm run office:evidence:test` protects host attestation, repetition, font status, deck digest, stability, and policy decisions.
+
+The runbook and current blocker are recorded in `docs/CROSS_PLATFORM_PPTX_EVIDENCE.md`. Slidev, LibreOffice, artifact-tool, and PDF output must not be relabeled as Microsoft PowerPoint evidence.
+
 ## Editable PPTX renderer
 
 PptxGenJS renderer 支援與 Slidev 相同的十種 layout。文字、色塊、線條與圖形都是 PowerPoint 原生物件，不是整頁截圖；投影片備註保留 semantic layout 與來源路徑。為維持第三方 reader 相容性，OOXML effect surface 明確不輸出 outer、inner 或 preset shadow effects。

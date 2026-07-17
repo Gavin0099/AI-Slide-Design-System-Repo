@@ -40,12 +40,13 @@
 - [x] Harden screenshot server build-root containment against traversal and sibling-prefix paths
 - [x] Validate deck description metadata and comparison accent tokens directly in the Semantic Model
 - [x] Remove the dead PPTX shadow abstraction while preserving byte-level OOXML parts and rendered pixels
+- [x] Add a fail-closed Windows/macOS PowerPoint evidence harness and record the first environment blockers
 
 ## Backlog
 
 <!-- Required: prioritized items not yet started -->
 
-- P1: Collect platform-specific PPTX and browser visual evidence before deciding whether CI can share one pixel baseline
+- P1: Collect two licensed PowerPoint PNG captures on Windows and two on macOS for the same PPTX digest, then run the shared-baseline decision gate
 - P1: Add explicit Semantic Model versioning and migration policy before external consumers depend on breaking contracts
 - P2: Validate PDF export after renderer ownership and font substitution behavior are stable
 
@@ -71,6 +72,7 @@
 - 2026-07-17: Resolve screenshot server files only when `path.relative(buildRoot, candidate)` is a non-absolute descendant path. Parent traversal and sibling paths sharing the `buildRoot` string prefix fall back to the built `index.html`.
 - 2026-07-17: Require direct-model `deck.description` to be non-empty, single-line, and at most 120 characters; restrict `comparison.accent` to the `governance` token. This tightens validation for direct Semantic Model consumers while leaving committed Content Markdown output unchanged.
 - 2026-07-17: Keep the editable PPTX effect surface explicitly shadow-free. Remove undefined shadow options and no-op call-site flags; enforce absence of outer, inner, and preset shadow elements in OOXML regression.
+- 2026-07-17: Keep the shared Office pixel baseline disabled until licensed Windows and macOS PowerPoint each produce two deterministic receipts for the exact same PPTX digest with Noto Sans TC installed. The current Windows installation is blocked by an unlicensed-product sign-in gate and no macOS Office host is attached, so the decision is `not_enough_evidence`.
 
 ## Known Risks
 
@@ -91,3 +93,4 @@
 - Lexical path containment does not resolve symlink targets. Mitigation: generated Slidev output is repo-owned and ephemeral; do not place symlinks in `dist/`, and add realpath containment if the server ever accepts externally controlled build trees.
 - Metadata rendered into Slidev frontmatter or PPTX properties can bypass parser-only checks when callers construct decks directly. Mitigation: validate description and accent in `validateDeck`, with missing, newline-injection, and allowlist regression through both renderers.
 - Dead renderer options can imply unsupported visual behavior and mislead future changes. Mitigation: remove the shadow abstraction and express the intended no-shadow contract as an observable OOXML assertion.
+- Office render evidence can be mislabeled or collected from a substitute renderer. Mitigation: bind receipts to the actual host OS, exact PPTX and per-slide PNG hashes, require two stable runs per platform, retain operator-attestation limits, and route any shared candidate to human authority review.

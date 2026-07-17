@@ -368,6 +368,7 @@ Deck metadata and semantic tokens are part of the model boundary: `deck.descript
 - Layout or visible example-content changes require approved 1280x720 baselines, zero-diff recapture in the reviewed environment, and original-resolution inspection for overflow, clipping, wrapping, hierarchy, and unintended overlap.
 - PPTX delivery additionally requires full-size rendering of every page and `slides_test.py` overflow inspection. Report font substitution and cross-platform behavior as claim boundaries unless separately verified.
 - The editable PPTX renderer intentionally emits no shadow effect elements; keep this as an OOXML assertion instead of an undefined renderer option or per-call `shadow: false` flags.
+- Cross-platform Office receipts must be collected on the declared host OS from licensed Microsoft PowerPoint, with `Noto Sans TC` installed, two deterministic runs per platform, the same PPTX SHA-256, and original-resolution inspection. Missing or blocked Office evidence is `not_enough_evidence`; do not substitute Slidev, LibreOffice, artifact-tool, or PDF output.
 
 ## Must-Test Paths
 <!-- governance:key=must_test_paths -->
@@ -385,6 +386,7 @@ Prompt yourself:
 
 - `model/**`, `scripts/render-content.mjs`, and `decks/**/content.md`: run `npm run content:test`, `npm run lint`, and `npm run render:check`.
 - PPTX renderer changes: run `npm run pptx:test`, render every slide, and run `slides_test.py` before delivery.
+- Office evidence collector or comparator changes: run `npm run office:evidence:test`; shared-baseline promotion additionally requires two receipts per platform plus external human authority review.
 - `theme/layouts/**`, `theme/components/**`, and `theme/styles/**`: run `npm run build`.
 - `theme/fonts/**`: run `npm run font:check`; if the source repository, commit, or source path changes, also run `npm run font:provenance:verify` and record the network evidence.
 - Generated `decks/**/deck.mjs` or `decks/**/slides.md`: run `npm run check` so content freshness, semantic constraints, and generated output are verified.
