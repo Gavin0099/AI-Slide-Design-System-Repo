@@ -6,6 +6,8 @@
 AI SLIDE DESIGN SYSTEM
 ### title
 讓 AI 在受控設計空間中生成
+### titleBreakAfter
+讓 AI 在受控設計空間
 ### subtitle
 從自由排版，轉向可重現的語意版型
 

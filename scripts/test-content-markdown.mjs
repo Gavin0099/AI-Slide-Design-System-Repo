@@ -16,6 +16,7 @@ function normalizeLineEndings(value) {
 
 const parsed = parseContentMarkdown(source)
 assert.deepEqual(parsed, deck, 'content.md must project exactly to the generated Semantic Model module')
+assert.equal(parsed.slides[0].titleBreakAfter, '讓 AI 在受控設計空間')
 assert.equal(
   renderDeckModule(parsed),
   normalizeLineEndings(await readFile(deckPath, 'utf8')),
@@ -42,5 +43,12 @@ assert.throws(
   () => parseContentMarkdown(source.replace('讓 AI 在受控設計空間中生成', '這是一個刻意超過二十二個中文字限制而且不應該通過的投影片標題')),
   /exceeds 22 characters/,
 )
+assert.throws(
+  () => parseContentMarkdown(source.replace('讓 AI 在受控設計空間\n### subtitle', '不是標題前綴\n### subtitle')),
+  /titleBreakAfter must be a proper prefix/,
+)
+
+const withoutOptionalTitleBreak = source.replace(/\n### titleBreakAfter\n讓 AI 在受控設計空間/, '')
+assert.equal(parseContentMarkdown(withoutOptionalTitleBreak).slides[0].titleBreakAfter, undefined)
 
 console.log('Content Markdown tests passed: deterministic projection plus layout, field, structure, and model failure paths')

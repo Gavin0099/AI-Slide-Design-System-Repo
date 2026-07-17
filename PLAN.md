@@ -2,7 +2,7 @@
 <!-- governance-baseline: overridable -->
 <!-- baseline_version: 1.0.0 -->
 
-> **最後更新**: 2026-07-16
+> **最後更新**: 2026-07-17
 > **Owner**: GavinWu
 > **Freshness**: Sprint (7d)
 
@@ -34,6 +34,7 @@
 - [x] Add deterministic `content.md -> deck.mjs -> PPTX` generation and failure-path tests
 - [x] Close the visual-gate review findings: semantic newline rejection, real-deck structure assertions, local pixel enforcement, and external human authority binding
 - [x] Correct the font provenance claim boundary and add an explicit upstream byte/digest verifier
+- [x] Replace deck-specific PPTX title wrapping with validated Semantic Model `titleBreakAfter` intent
 
 ## Backlog
 
@@ -58,6 +59,7 @@
 - 2026-07-16: Separate baseline artifact integrity, current-render pixel regression, and human review authority into independent gates; local `check` owns pixel regression while platform-neutral CI uses `check:ci`.
 - 2026-07-16: Human visual authority must be an explicit external decision bound to the exact baseline manifest digest; agents may serialize but must not infer or self-sign that decision.
 - 2026-07-16: Keep local font integrity and upstream provenance as separate claims. Use an opt-in network verifier for exact official-commit byte comparison; do not duplicate the same digest inside one mutable manifest or add remote availability to the default gate.
+- 2026-07-17: Express intentional title wrapping as optional Semantic Model `titleBreakAfter`; require a proper title prefix and make both renderers consume it instead of matching deck-specific copy.
 
 ## Known Risks
 
@@ -72,3 +74,4 @@
 - Strict Markdown input is intentionally less expressive than arbitrary prose. Mitigation: unknown headings, missing fields, malformed structured items, and model-limit violations fail before either renderer runs.
 - A committed authority receipt cannot by itself prove real-world reviewer identity. Mitigation: receipt validation binds the decision to exact baseline bytes, CODEOWNERS routes review, and branch protection remains the external enforcement boundary.
 - The upstream font verifier depends on GitHub raw content availability and still cannot authenticate a reviewer. Mitigation: keep it outside default checks, restrict it to the official repository and pinned family path, and route font changes through CODEOWNERS review.
+- Explicit title wrapping duplicates a title prefix in Content Markdown. Mitigation: model validation rejects stale, complete-title, whitespace-padded, or injected break values before either renderer runs.

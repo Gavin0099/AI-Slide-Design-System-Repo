@@ -29,6 +29,15 @@ function text(value, path, maxLength) {
     throw new Error(`${path} exceeds ${maxLength} characters`)
 }
 
+function titleBreakIntent(slide, path) {
+  if (slide.titleBreakAfter === undefined) return
+  text(slide.titleBreakAfter, `${path}.titleBreakAfter`, LIMITS.title)
+  if (slide.titleBreakAfter !== slide.titleBreakAfter.trim())
+    throw new Error(`${path}.titleBreakAfter must not start or end with whitespace`)
+  if (!slide.title.startsWith(slide.titleBreakAfter) || slide.title === slide.titleBreakAfter)
+    throw new Error(`${path}.titleBreakAfter must be a proper prefix of ${path}.title`)
+}
+
 function list(value, path) {
   if (!Array.isArray(value) || value.length === 0)
     throw new Error(`${path} must contain at least one item`)
@@ -74,6 +83,7 @@ export function validateDeck(deck) {
         throw new Error(`${path}.type must be one of ${SLIDE_TYPES.join(', ')}`)
 
       text(slide.title, `${path}.title`, LIMITS.title)
+      titleBreakIntent(slide, path)
 
       if (slide.type === 'cover') {
         text(slide.eyebrow, `${path}.eyebrow`, LIMITS.item)

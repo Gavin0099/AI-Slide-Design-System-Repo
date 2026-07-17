@@ -6,7 +6,7 @@ layout: "cover"
 eyebrow: "AI SLIDE DESIGN SYSTEM"
 ---
 
-# 讓 AI 在受控設計空間中生成
+# 讓 AI 在受控設計空間<br>中生成
 
 ## 從自由排版，轉向可重現的語意版型
 

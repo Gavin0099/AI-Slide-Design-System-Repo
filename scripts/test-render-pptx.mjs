@@ -9,6 +9,7 @@ import { createEditablePresentation, renderDeckToPptx } from './render-pptx.mjs'
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const runtimeRoot = path.join(repoRoot, 'artifacts', 'runtime', 'pptx')
 const outputPath = path.join(runtimeRoot, 'semantic-model-test.pptx')
+const explicitBreakOutputPath = path.join(runtimeRoot, 'explicit-title-break-test.pptx')
 
 function decodeXml(value) {
   return value
@@ -21,6 +22,14 @@ function decodeXml(value) {
 
 function semanticText(value) {
   return value.replace(/\s+/g, '')
+}
+
+function paragraphTexts(xml) {
+  return [...xml.matchAll(/<a:p>([\s\S]*?)<\/a:p>/g)].map(paragraph =>
+    [...paragraph[1].matchAll(/<a:t>([\s\S]*?)<\/a:t>/g)]
+      .map(match => decodeXml(match[1]))
+      .join(''),
+  )
 }
 
 function visibleStrings(slide) {
@@ -86,6 +95,20 @@ for (const [index, entry] of slideEntries.entries()) {
 const theme = await archive.file('ppt/theme/theme1.xml').async('string')
 assert.match(theme, /Noto Sans TC/, 'PPTX theme must declare the governed Chinese font family')
 
+const explicitBreakDeck = structuredClone(deck)
+explicitBreakDeck.slides[0].title = '完全不同的封面標題'
+explicitBreakDeck.slides[0].titleBreakAfter = '完全不同的'
+await renderDeckToPptx(explicitBreakDeck, explicitBreakOutputPath)
+const explicitBreakArchive = await JSZip.loadAsync(await readFile(explicitBreakOutputPath))
+const explicitBreakXml = await explicitBreakArchive.file('ppt/slides/slide1.xml').async('string')
+const explicitBreakParagraphs = paragraphTexts(explicitBreakXml)
+assert.ok(explicitBreakParagraphs.includes('完全不同的'), 'PPTX must render the explicit first title line')
+assert.ok(explicitBreakParagraphs.includes('封面標題'), 'PPTX must render the explicit second title line')
+assert.ok(
+  explicitBreakParagraphs.indexOf('完全不同的') < explicitBreakParagraphs.indexOf('封面標題'),
+  'PPTX title lines must preserve Semantic Model order',
+)
+
 const invalidDeck = structuredClone(deck)
 invalidDeck.slides[0].title = '這是一個刻意超過二十二個中文字限制而且不應該通過的投影片標題'
 assert.throws(() => createEditablePresentation(invalidDeck), /exceeds 22 characters/)
@@ -97,6 +120,7 @@ await writeFile(path.join(runtimeRoot, 'editability-report.json'), `${JSON.strin
   flattenedPictures: mediaEntries.length,
   themeFont: 'Noto Sans TC',
   fontEmbedded: false,
+  explicitTitleBreakIntent: true,
   slides: report,
 }, null, 2)}\n`)
 

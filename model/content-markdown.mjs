@@ -1,35 +1,39 @@
 import { SLIDE_TYPES, validateDeck } from './slide-model.mjs'
 
+const TITLE_FIELDS = Object.freeze({
+  title: 'scalar', titleBreakAfter: 'optional-scalar',
+})
+
 const FIELD_KINDS = Object.freeze({
   cover: {
-    eyebrow: 'scalar', title: 'scalar', subtitle: 'scalar',
+    eyebrow: 'scalar', ...TITLE_FIELDS, subtitle: 'scalar',
   },
   'key-message': {
-    eyebrow: 'scalar', title: 'scalar', subtitle: 'scalar', visual: 'scalar', evidence: 'scalar',
+    eyebrow: 'scalar', ...TITLE_FIELDS, subtitle: 'scalar', visual: 'scalar', evidence: 'scalar',
   },
   comparison: {
-    title: 'scalar', accent: 'scalar', leftTitle: 'scalar', leftItems: 'list', rightTitle: 'scalar', rightItems: 'list',
+    ...TITLE_FIELDS, accent: 'scalar', leftTitle: 'scalar', leftItems: 'list', rightTitle: 'scalar', rightItems: 'list',
   },
   'problem-solution': {
-    title: 'scalar', problemTitle: 'scalar', problemItems: 'list', solutionTitle: 'scalar', solutionItems: 'list',
+    ...TITLE_FIELDS, problemTitle: 'scalar', problemItems: 'list', solutionTitle: 'scalar', solutionItems: 'list',
   },
   process: {
-    eyebrow: 'scalar', title: 'scalar', steps: 'pairs',
+    eyebrow: 'scalar', ...TITLE_FIELDS, steps: 'pairs',
   },
   architecture: {
-    eyebrow: 'scalar', title: 'scalar', layers: 'pairs',
+    eyebrow: 'scalar', ...TITLE_FIELDS, layers: 'pairs',
   },
   evidence: {
-    eyebrow: 'scalar', title: 'scalar', claim: 'scalar', status: 'scalar', sources: 'list',
+    eyebrow: 'scalar', ...TITLE_FIELDS, claim: 'scalar', status: 'scalar', sources: 'list',
   },
   metrics: {
-    eyebrow: 'scalar', title: 'scalar', metrics: 'metrics',
+    eyebrow: 'scalar', ...TITLE_FIELDS, metrics: 'metrics',
   },
   decision: {
-    eyebrow: 'scalar', title: 'scalar', decision: 'scalar', reasons: 'list', owner: 'scalar', nextAction: 'scalar',
+    eyebrow: 'scalar', ...TITLE_FIELDS, decision: 'scalar', reasons: 'list', owner: 'scalar', nextAction: 'scalar',
   },
   closing: {
-    eyebrow: 'scalar', title: 'scalar', summary: 'scalar', actions: 'list', nextAction: 'scalar',
+    eyebrow: 'scalar', ...TITLE_FIELDS, summary: 'scalar', actions: 'list', nextAction: 'scalar',
   },
 })
 
@@ -65,17 +69,20 @@ function parseStructured(lines, sourceName, path, parts) {
 }
 
 function parseField(lines, kind, sourceName, path) {
-  if (kind === 'scalar') return parseScalar(lines, sourceName, path)
-  if (kind === 'list') return parseList(lines, sourceName, path)
-  if (kind === 'pairs') return parseStructured(lines, sourceName, path, ['title', 'detail'])
-  if (kind === 'metrics') return parseStructured(lines, sourceName, path, ['label', 'value', 'detail'])
+  const parserKind = kind.replace(/^optional-/, '')
+  if (parserKind === 'scalar') return parseScalar(lines, sourceName, path)
+  if (parserKind === 'list') return parseList(lines, sourceName, path)
+  if (parserKind === 'pairs') return parseStructured(lines, sourceName, path, ['title', 'detail'])
+  if (parserKind === 'metrics') return parseStructured(lines, sourceName, path, ['label', 'value', 'detail'])
   fail(sourceName, `${path} uses unsupported parser kind ${kind}`)
 }
 
 function buildSlide(type, fields) {
   if (type === 'comparison') {
     return {
-      type, title: fields.title, accent: fields.accent,
+      type, title: fields.title,
+      ...(fields.titleBreakAfter ? { titleBreakAfter: fields.titleBreakAfter } : {}),
+      accent: fields.accent,
       left: { title: fields.leftTitle, items: fields.leftItems },
       right: { title: fields.rightTitle, items: fields.rightItems },
     }
@@ -83,6 +90,7 @@ function buildSlide(type, fields) {
   if (type === 'problem-solution') {
     return {
       type, title: fields.title,
+      ...(fields.titleBreakAfter ? { titleBreakAfter: fields.titleBreakAfter } : {}),
       problem: { title: fields.problemTitle, items: fields.problemItems },
       solution: { title: fields.solutionTitle, items: fields.solutionItems },
     }
@@ -115,14 +123,17 @@ function parseSlide(section, sourceName, slideIndex) {
   for (const field of rawFields.keys()) {
     if (!(field in schema)) fail(sourceName, `slide ${slideIndex + 1} has unknown field ${field} for ${section.type}`)
   }
-  for (const field of Object.keys(schema)) {
-    if (!rawFields.has(field)) fail(sourceName, `slide ${slideIndex + 1} is missing required field ${field}`)
+  for (const [field, kind] of Object.entries(schema)) {
+    if (!kind.startsWith('optional-') && !rawFields.has(field))
+      fail(sourceName, `slide ${slideIndex + 1} is missing required field ${field}`)
   }
 
-  const fields = Object.fromEntries(Object.entries(schema).map(([field, kind]) => [
-    field,
-    parseField(rawFields.get(field), kind, sourceName, `slides[${slideIndex}].${field}`),
-  ]))
+  const fields = Object.fromEntries(Object.entries(schema)
+    .filter(([field]) => rawFields.has(field))
+    .map(([field, kind]) => [
+      field,
+      parseField(rawFields.get(field), kind, sourceName, `slides[${slideIndex}].${field}`),
+    ]))
   return buildSlide(section.type, fields)
 }
 

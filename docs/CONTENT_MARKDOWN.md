@@ -40,6 +40,8 @@ Each slide starts with an allowlisted layout heading. Every layout field uses a 
 AI SLIDE DESIGN SYSTEM
 ### title
 讓 AI 在受控設計空間中生成
+### titleBreakAfter
+讓 AI 在受控設計空間
 ### subtitle
 從自由排版，轉向可重現的語意版型
 ```
@@ -55,6 +57,11 @@ Ordinary lists use Markdown bullets:
 - 避免自由 CSS 漂移
 - 讓品質證據可重現
 ```
+
+`titleBreakAfter` is optional on every layout. When present, it must be a
+non-empty proper prefix of `title`. Both renderers use it as an explicit visual
+line-break intent; changing the title without updating the prefix fails model
+validation instead of silently changing the wrap.
 
 Process steps and architecture layers use `title :: detail`:
 

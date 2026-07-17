@@ -27,6 +27,11 @@ function normalizeLineEndings(value) {
   return value.replaceAll('\r\n', '\n').replaceAll('\r', '\n')
 }
 
+function titleHeading(slide) {
+  if (!slide.titleBreakAfter) return `# ${slide.title}`
+  return `# ${slide.titleBreakAfter}<br>${slide.title.slice(slide.titleBreakAfter.length)}`
+}
+
 function renderSlide(deckToRender, slide, index) {
   if (slide.type === 'cover') {
     return [
@@ -37,7 +42,7 @@ function renderSlide(deckToRender, slide, index) {
         layout: 'cover',
         eyebrow: slide.eyebrow,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
       `## ${slide.subtitle}`,
     ].join('\n\n')
   }
@@ -49,7 +54,7 @@ function renderSlide(deckToRender, slide, index) {
         eyebrow: slide.eyebrow,
         visual: slide.visual,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
       `## ${slide.subtitle}`,
       '::evidence::',
       slide.evidence,
@@ -64,7 +69,7 @@ function renderSlide(deckToRender, slide, index) {
         rightTitle: slide.right.title,
         accent: slide.accent,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
       '::left::',
       bulletList(slide.left.items),
       '::right::',
@@ -79,7 +84,7 @@ function renderSlide(deckToRender, slide, index) {
         problemTitle: slide.problem.title,
         solutionTitle: slide.solution.title,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
       '::problem::',
       bulletList(slide.problem.items),
       '::solution::',
@@ -94,7 +99,7 @@ function renderSlide(deckToRender, slide, index) {
         eyebrow: slide.eyebrow,
         steps: slide.steps,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
     ].join('\n\n')
   }
 
@@ -105,7 +110,7 @@ function renderSlide(deckToRender, slide, index) {
         eyebrow: slide.eyebrow,
         layers: slide.layers,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
     ].join('\n\n')
   }
 
@@ -118,7 +123,7 @@ function renderSlide(deckToRender, slide, index) {
         status: slide.status,
         sources: slide.sources,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
     ].join('\n\n')
   }
 
@@ -129,7 +134,7 @@ function renderSlide(deckToRender, slide, index) {
         eyebrow: slide.eyebrow,
         metrics: slide.metrics,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
     ].join('\n\n')
   }
 
@@ -143,7 +148,7 @@ function renderSlide(deckToRender, slide, index) {
         owner: slide.owner,
         nextAction: slide.nextAction,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
     ].join('\n\n')
   }
 
@@ -156,7 +161,7 @@ function renderSlide(deckToRender, slide, index) {
         actions: slide.actions,
         nextAction: slide.nextAction,
       }),
-      `# ${slide.title}`,
+      titleHeading(slide),
     ].join('\n\n')
   }
 

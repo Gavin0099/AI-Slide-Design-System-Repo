@@ -104,12 +104,16 @@ function addList(slide, items, x, y, w, options = {}) {
   })
 }
 
+function titleText(model) {
+  if (!model.titleBreakAfter) return model.title
+  return `${model.titleBreakAfter}\n${model.title.slice(model.titleBreakAfter.length)}`
+}
+
 function renderCover(pptx, model) {
   const slide = pptx.addSlide()
-  const title = model.title.replace('空間中生成', '空間\n中生成')
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
-  addText(slide, title, 0.88, 2.56, 7.2, 1.66, {
+  addText(slide, titleText(model), 0.88, 2.56, 7.2, 1.66, {
     fontSize: 50,
     bold: true,
     breakLine: true,
@@ -135,7 +139,7 @@ function renderKeyMessage(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
-  addText(slide, model.title, 0.88, 2.55, 6.2, 0.75, { fontSize: 43, bold: true })
+  addText(slide, titleText(model), 0.88, 2.55, 6.2, 0.75, { fontSize: 43, bold: true })
   addText(slide, model.subtitle, 0.88, 3.46, 6.25, 0.5, { fontSize: 22, color: C.muted })
   addCard(slide, 8.38, 2.18, 4.05, 2.55)
   slide.addShape(pptxgen.ShapeType.roundRect, { x: 8.7, y: 2.5, w: 3.4, h: 0.68, fill: { color: C.accent }, line: { color: C.accent } })
@@ -155,7 +159,7 @@ function renderKeyMessage(pptx, model) {
 function renderComparison(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
-  addTitle(slide, model.title, 0.62, C.ink, 36)
+  addTitle(slide, titleText(model), 0.62, C.ink, 36)
   const columns = [
     { x: 0.88, data: model.left, accent: C.muted, fill: C.surface },
     { x: 6.83, data: model.right, accent: C.accent, fill: 'F1F2FF' },
@@ -171,7 +175,7 @@ function renderComparison(pptx, model) {
 function renderProblemSolution(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
-  addTitle(slide, model.title, 0.62, C.ink, 36)
+  addTitle(slide, titleText(model), 0.62, C.ink, 36)
   slide.addShape(pptxgen.ShapeType.chevron, { x: 6.28, y: 3.64, w: 0.5, h: 0.48, fill: { color: C.accent }, line: { color: C.accent } })
   const cards = [
     { x: 0.88, data: model.problem, label: '問題', accent: C.danger, fill: 'FFF6F7' },
@@ -190,7 +194,7 @@ function renderProcess(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
-  addTitle(slide, model.title, 0.94, C.ink, 36)
+  addTitle(slide, titleText(model), 0.94, C.ink, 36)
   slide.addShape(pptxgen.ShapeType.line, { x: 1.56, y: 2.75, w: 9.98, h: 0, line: { color: C.cyan, width: 2 } })
   const cardW = 3.66
   model.steps.forEach((step, index) => {
@@ -208,7 +212,7 @@ function renderArchitecture(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
-  addTitle(slide, model.title, 0.94, C.ink, 36)
+  addTitle(slide, titleText(model), 0.94, C.ink, 36)
   const accents = [C.accent, C.cyan, C.success]
   model.layers.forEach((layer, index) => {
     const x = 0.88 + index * 0.3
@@ -226,7 +230,7 @@ function renderEvidence(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
-  addTitle(slide, model.title, 0.94, C.ink, 36)
+  addTitle(slide, titleText(model), 0.94, C.ink, 36)
   const statusColors = { verified: C.success, detected: C.warning, unproven: C.danger }
   const statusLabels = { verified: 'VERIFIED / 已驗證', detected: 'DETECTED / 已偵測', unproven: 'UNPROVEN / 未證明' }
   addCard(slide, 0.88, 1.94, 11.56, 0.92, { line: statusColors[model.status], fill: 'F3FBF8', shadow: false })
@@ -246,7 +250,7 @@ function renderMetrics(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
-  addTitle(slide, model.title, 0.94, C.ink, 36)
+  addTitle(slide, titleText(model), 0.94, C.ink, 36)
   const accents = [C.accent, C.cyan, C.success]
   model.metrics.forEach((metric, index) => {
     const x = 0.88 + index * 3.94
@@ -264,7 +268,7 @@ function renderDecision(pptx, model) {
   const slide = pptx.addSlide()
   addDecor(slide)
   addEyebrow(slide, model.eyebrow)
-  addTitle(slide, model.title, 0.94, C.ink, 36)
+  addTitle(slide, titleText(model), 0.94, C.ink, 36)
   addCard(slide, 0.88, 1.88, 11.56, 0.84, { line: C.accent, fill: 'F0F1FF', shadow: false })
   slide.addShape(pptxgen.ShapeType.rect, { x: 0.88, y: 1.88, w: 0.08, h: 0.84, fill: { color: C.accent }, line: { color: C.accent } })
   addText(slide, 'DECISION', 1.25, 2.12, 1.3, 0.3, { fontSize: 10, bold: true, color: C.accent, charSpacing: 1.6 })
@@ -289,7 +293,7 @@ function renderClosing(pptx, model) {
   slide.background = { color: C.accentStrong }
   slide.addShape(pptxgen.ShapeType.ellipse, { x: 9.16, y: 0.08, w: 4.0, h: 4.0, fill: { color: C.cyan, transparency: 28 }, line: { color: C.cyan, transparency: 100 } })
   addEyebrow(slide, model.eyebrow, 'BCEFF5')
-  addTitle(slide, model.title, 3.24, 'FFFFFF', 42)
+  addTitle(slide, titleText(model), 3.24, 'FFFFFF', 42)
   addText(slide, model.summary, 0.88, 4.22, 10.5, 0.44, { fontSize: 19, color: 'D9E1FF' })
   model.actions.forEach((action, index) => {
     const x = 0.88 + index * 3.94

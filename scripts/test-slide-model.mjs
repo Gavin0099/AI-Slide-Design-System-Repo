@@ -13,6 +13,26 @@ const validDeck = {
 
 assert.deepEqual(validateDeck(validDeck), [])
 
+const explicitTitleBreak = structuredClone(validDeck)
+explicitTitleBreak.slides[0].titleBreakAfter = '有效'
+assert.deepEqual(validateDeck(explicitTitleBreak), [])
+
+const mismatchedTitleBreak = structuredClone(validDeck)
+mismatchedTitleBreak.slides[0].titleBreakAfter = '不存在'
+assert.match(validateDeck(mismatchedTitleBreak)[0], /must be a proper prefix/)
+
+const completeTitleBreak = structuredClone(validDeck)
+completeTitleBreak.slides[0].titleBreakAfter = completeTitleBreak.slides[0].title
+assert.match(validateDeck(completeTitleBreak)[0], /must be a proper prefix/)
+
+const injectedTitleBreak = structuredClone(validDeck)
+injectedTitleBreak.slides[0].titleBreakAfter = '有效\n---'
+assert.match(validateDeck(injectedTitleBreak)[0], /must not contain line breaks/)
+
+const paddedTitleBreak = structuredClone(validDeck)
+paddedTitleBreak.slides[0].titleBreakAfter = '有效 '
+assert.match(validateDeck(paddedTitleBreak)[0], /must not start or end with whitespace/)
+
 const injectedTitle = structuredClone(validDeck)
 injectedTitle.slides[0].title = 'ok\n---\nlayout: cover'
 assert.match(validateDeck(injectedTitle)[0], /must not contain line breaks/)

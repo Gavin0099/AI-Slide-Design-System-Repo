@@ -6,7 +6,7 @@ const fixtureDeck = {
   title: 'Renderer test',
   description: 'Three semantic slides must remain three Slidev pages.',
   slides: [
-    { type: 'cover', eyebrow: 'TEST', title: '封面', subtitle: '副標題' },
+    { type: 'cover', eyebrow: 'TEST', title: '封面標題', titleBreakAfter: '封面', subtitle: '副標題' },
     {
       type: 'key-message',
       eyebrow: 'TEST',
@@ -75,6 +75,7 @@ function assertOneToOneStructure(deck, label) {
 }
 
 const rendered = assertOneToOneStructure(fixtureDeck, 'fixture deck')
+assert.match(rendered, /# 封面<br>標題/, 'Slidev renderer must consume explicit title break intent')
 assertOneToOneStructure(realDeck, 'decks/ai-governance/deck.mjs')
 for (const layout of ['evidence', 'metrics', 'decision', 'closing'])
   assert.match(rendered, new RegExp(`layout: "${layout}"`))
