@@ -23,6 +23,13 @@ const governanceDrift = await readFile(path.join(repoRoot, '.github', 'workflows
 assert.match(governanceDrift, /uses:\s*actions\/setup-node@v6/u, 'governance-drift.yml must use the Node 24 setup-node action')
 assert.match(governanceDrift, /node scripts\/check-governance-projection\.mjs/u, 'governance drift must validate the committed repo-owned projection without package-script coupling')
 assert.doesNotMatch(governanceDrift, /governance\/governance_tools/u, 'governance drift must not call framework tooling that is absent without the submodule')
+for (const triggerPath of [
+  '.github/workflows/governance-drift.yml',
+  'scripts/check-governance-projection.mjs',
+  'scripts/test-github-workflows.mjs',
+]) {
+  assert.equal(governanceDrift.split(`- "${triggerPath}"`).length, 3, `governance drift push and pull_request filters must include ${triggerPath}`)
+}
 
 assert.match(slideQuality, /node scripts\/test-github-workflows\.mjs/u, 'slide quality must execute the workflow regression before dependency installation')
 
